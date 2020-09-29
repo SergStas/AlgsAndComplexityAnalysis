@@ -7,29 +7,29 @@ namespace ACALab1
 {
     public static class Measurer
     {
-        public static double MeasureOnSpecifiedCollection<TEl, TRet>(Func<IEnumerable<TEl>, TRet> algorithm,
+        public static double MeasureOnSpecifiedCollection<TEl, TRes>(Func<IEnumerable<TEl>, TRes> algorithm,
             IEnumerable<TEl> collection)
         {
-            algorithm(new TEl[0]);
-            return Measure(() => algorithm(collection)) / 1000;
+            var e = algorithm(new TEl[0]);
+            return Measure(() => algorithm(collection));
         }
         
-        public static double MeasureOnRandomCollections<TEl, TRet>(Func<IEnumerable<TEl>, TRet> algorithm, 
+        public static double MeasureOnRandomCollections<TEl, TRes>(Func<IEnumerable<TEl>, TRes> algorithm, 
             Func<int, IEnumerable<TEl>> generator, int length, int iterations)
         {
             var collections = GenerateCollections(generator, length, iterations);
-            algorithm(generator(length));
+            var e = algorithm(generator(length));
             return Measure(() =>
-                { foreach (var collection in collections) algorithm(collection); }) / 1000 / iterations;
+                { foreach (var collection in collections) algorithm(collection); }) / (double)iterations;
         }
 
-        private static TEl[][] GenerateCollections<TEl>(Func<int, IEnumerable<TEl>> generator, int length, int iterations)
+        private static List<List<TEl>> GenerateCollections<TEl>(Func<int, IEnumerable<TEl>> generator, int length, int iterations)
         /*  Сложность операции генерации коллекций - не меньше O(N)
             время, затраченное на генерацию, в рассчет не идет        */ 
         {
-            var result = new TEl[][iterations];
+            var result = new List<List<TEl>>();
             for (var i = 0; i < iterations; i++)
-                result[i] = generator(length).ToArray();
+                result.Add(generator(length).ToList());
             return result;
         }
 

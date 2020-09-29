@@ -6,7 +6,9 @@ namespace ACALab1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            FirstPart.DoWork(1000);
+            Console.WriteLine("Done");
+            Console.ReadLine();
         }
     }
 }
