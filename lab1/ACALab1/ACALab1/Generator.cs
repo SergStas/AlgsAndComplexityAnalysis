@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ACALab1
 {
-    public static class Generators
+    public static class Generator
     {
         public static List<int> IntListGenerator(int count)
         {

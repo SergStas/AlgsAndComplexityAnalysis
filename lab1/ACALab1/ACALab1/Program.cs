@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ACALab1
 {
@@ -6,8 +7,12 @@ namespace ACALab1
     {
         static void Main(string[] args)
         {
-            FirstPart.DoWork(1000);
+            var watch = new Stopwatch();
+            watch.Start();
+            FirstPart.DoWork(1000, true);
+            watch.Stop();
             Console.WriteLine("Done");
+            Console.WriteLine($"Elapsed time is {watch.Elapsed.ToString()}");
             Console.ReadLine();
         }
     }
