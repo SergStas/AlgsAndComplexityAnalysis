@@ -14,7 +14,7 @@ namespace ACALab1
             return Measure(() => algorithm(collection));
         }
         
-        public static double MeasureOnRandomCollections<TEl, TRes>(Func<IEnumerable<TEl>, TRes> algorithm, 
+        public static double MeasureOnGeneratedCollection<TEl, TRes>(Func<IEnumerable<TEl>, TRes> algorithm, 
             Func<int, IEnumerable<TEl>> generator, int length, int iterations)
         {
             var collections = GenerateCollections(generator, length, iterations);

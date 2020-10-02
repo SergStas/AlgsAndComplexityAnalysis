@@ -9,9 +9,9 @@ namespace ACALab1
         {
             var watch = new Stopwatch();
             watch.Start();
-            FirstPart.DoWork(1000, true);
+            //FirstPart.DoWork(1000, true);
+            SecondPart.DoWork(1000, true);
             watch.Stop();
-            Console.WriteLine("Done");
             Console.WriteLine($"Elapsed time is {watch.Elapsed.ToString()}");
             Console.ReadLine();
         }
