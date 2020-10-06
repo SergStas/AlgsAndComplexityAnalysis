@@ -18,7 +18,7 @@ namespace ACALab1
             Console.WriteLine($"Repetitions count: {iterations}");
             ProcessAlg(c => Max(c as IEnumerable<int>), "Max", iterations, fileLog);
             ProcessAlg(c => Count(c as IEnumerable<int>), "Count", iterations, fileLog);
-            ProcessAlg(c => ArrayBubbleSort(c as IEnumerable<int>), "BubbleSort", iterations, fileLog);
+            ProcessAlg(c => BubbleSort(c as IEnumerable<int>), "BubbleSort", iterations, fileLog);
             Console.WriteLine("PT1: Done");
         }
 
@@ -45,7 +45,7 @@ namespace ACALab1
             return result;
         }
 
-        private static bool ArrayBubbleSort<T>(IEnumerable<T> collection) where T : IComparable
+        private static bool BubbleSort<T>(IEnumerable<T> collection) where T : IComparable
         {
             var arr = collection?.ToArray();
             if (arr is null)
