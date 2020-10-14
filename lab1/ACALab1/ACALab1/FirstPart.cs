@@ -10,7 +10,7 @@ namespace ACALab1
     { 
         private static readonly int[] _sizes =
         {
-            100, 250, 500, 750, 1000, 1250, 2500, 5000, 7500, 10000
+            200000
         };
         
         public static void DoWork(int iterations, bool fileLog)

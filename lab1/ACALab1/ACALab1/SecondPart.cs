@@ -16,7 +16,7 @@ namespace ACALab1
             Console.WriteLine($"Repetitions count: {iterations}");
             PerformAllLaunches(
                 c => Count(c as IEnumerable<int>),
-                c => (c as IEnumerable<int>)?.Count(),
+                    c => (c as IEnumerable<int>)?.Count(),
                 new Func<int, IEnumerable<int>>[]{ RandomIntGenerator, RandomIntGenerator, RandomIntGenerator },
                 "Count",
                 iterations,
