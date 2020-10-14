@@ -15,6 +15,7 @@
           </e>
         </e>
         <e p="Program.cs" t="Include" />
+        <e p="StackCommandPerformer.cs" t="Include" />
         <e p="StringStack.cs" t="Include" />
       </e>
       <e p="ACALab2.sln" t="IncludeFlat" />

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ACALab2
 {
-    public class StringStack
+    public partial class StringStack
     {
         public bool IsEmpty => _content.Count == 0;
         public int Count => _content.Count;
@@ -41,17 +41,12 @@ namespace ACALab2
         public string Pop()
         {
             var result = Top();
-            _content.RemoveAt(Count - 1);
+            if (!IsEmpty)
+                _content.RemoveAt(Count - 1);
             return result;
         }
 
-        public string Top()
-        {
-            if (IsEmpty)
-                throw new InvalidOperationException($"Stack \"{this}\" was empty");
-            var result = _content[Count - 1];
-            return result;
-        }
+        public string Top() => IsEmpty ? null : _content[Count - 1];
 
         public void Print() => Print(Console.WriteLine);
 
