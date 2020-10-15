@@ -10,6 +10,8 @@ namespace ACALab2
         
         private static void Main()
         {
+            ThirdPart.DoWork(5000, true);
+            Console.ReadLine();
             CheckBasicFunctional();
             CheckInputQueries();
             Console.ReadLine();
@@ -21,7 +23,7 @@ namespace ACALab2
             for (var i = 0; i < lines.Length; i++)
             {
                 Console.WriteLine($"Launch#{i + 1}, command line - \"{lines[i]}\"");
-                StringStack.ExecuteCommand(lines[i]);
+                StringStack.ExecuteCommand(lines[i], new StringStack());
                 Console.WriteLine("\n==============================");
             }
         }

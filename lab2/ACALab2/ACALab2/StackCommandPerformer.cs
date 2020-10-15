@@ -6,14 +6,15 @@ namespace ACALab2
     {
         private static readonly Action<string> DefaultOutput = Console.WriteLine;
         
-        public static void ExecuteCommand(string query)
+        public static void ExecuteCommand(string query, StringStack stack, Action<string> output)
         {
             var tokens = query.Split(Splitters);
-            var stack = new StringStack();
             foreach (var token in tokens)
-                ProcessToken(stack, token, DefaultOutput);
+                ProcessToken(stack, token, output);
         }
 
+        public static void ExecuteCommand(string query, StringStack stack) => ExecuteCommand(query, stack, DefaultOutput);
+        
         private static void ProcessToken(StringStack stack, string token, Action<string> output)
         {
             var value = token.Length == 1 ? null : token.Substring(2);
