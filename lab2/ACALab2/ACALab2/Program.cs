@@ -10,7 +10,8 @@ namespace ACALab2
         
         private static void Main()
         {
-            ThirdPart.DoWork(5000, true);
+            //Console.WriteLine(InfixNotationConverter.ConvertToPostfix("sqrt(12 + 4 - ln(cos45 + 3*sin (2 ^ 5)))"));
+            ThirdPart.DoWork(10, false);
             Console.ReadLine();
             CheckBasicFunctional();
             CheckInputQueries();
