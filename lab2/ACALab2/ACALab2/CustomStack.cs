@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
@@ -52,7 +53,7 @@ namespace ACALab2
 
         public void Print(Action<string> output) => output(string.Join(' ', _content));
 
-        private List<T> ParseContent(string row) => row.Split(Splitters).Select(e => (T)TryParse(e)).ToList();
+        private static List<T> ParseContent(string row) => row.Split(Splitters).Select(e => (T)TryParse(e)).ToList();
 
         private static object TryParse(string e)
         {
@@ -68,9 +69,9 @@ namespace ACALab2
                 return b;
             if (char.TryParse(e, out var c))
                 return c;
-            throw new NotImplementedException();
+            throw new InvalidEnumArgumentException();
         }
 
-        public override string ToString() => $"StringStack[{Count}]: {string.Join(' ', _content)}";
+        public override string ToString() => $"Stack[{Count}]: {string.Join(' ', _content)}";
     }
 }

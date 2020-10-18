@@ -6,7 +6,10 @@
     <e p="D:\git\labs\AlgsAndComplexityAnalysis\lab2\ACALab2" t="IncludeFlat">
       <e p="ACALab2" t="IncludeRecursive">
         <e p="ACALab2.csproj" t="IncludeRecursive" />
+        <e p="BasicOperators.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="CustomStack.cs" t="Include" />
+        <e p="FunctionalCheck.cs" t="Include" />
         <e p="InfixNotationConverter.cs" t="Include" />
         <e p="Measurer.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
@@ -16,9 +19,9 @@
             </e>
           </e>
         </e>
+        <e p="Operator.cs" t="Include" />
         <e p="Program.cs" t="Include" />
         <e p="StackCommandPerformer.cs" t="Include" />
-        <e p="StringStack.cs" t="Include" />
         <e p="ThirdPart.cs" t="Include" />
       </e>
       <e p="ACALab2.sln" t="IncludeFlat" />
