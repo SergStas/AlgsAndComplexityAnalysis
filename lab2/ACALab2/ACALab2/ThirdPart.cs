@@ -24,7 +24,7 @@ namespace ACALab2
                 Console.WriteLine($"Test \"{TestNames[i]}\":");
                 foreach (var size in CommandRepetitions)
                 {
-                    var result = Measurer.MeasureCommandExecuting(rows[i], new StringStack(), iterations);
+                    var result = Measurer.MeasureCommandExecuting(rows[i], new CustomStack<string>(), iterations);
                     Console.WriteLine($"\tLength = {size}, time - {result} ms");
                     results.Add(result);
                 }

@@ -3,8 +3,10 @@ using System.Linq;
 
 namespace ACALab2
 {
-    public static class InfixNotationConverter
+    public class InfixNotationConverter
     {
+        public string InfixNotation { get; }
+        
         private static readonly char[] Splitters = {' ', '\t', '\n'};
 
         private static readonly Dictionary<string, char> OperationsAliases = new Dictionary<string, char>
@@ -22,19 +24,18 @@ namespace ACALab2
             {'^', 2},
             {'#', 3}, {'$', 3}, {'%', 3}, {'&', 3}
         };
-
-        private static List<string> Buffer;
         
-        public static string ConvertToPostfix(string infixNotation)
+        public InfixNotationConverter(string infix) => InfixNotation = infix;
+        
+        public string ConvertToPostfix()
         {
-            Buffer = new List<string>();
-            var formatted = FormatInfix(infixNotation);
+            var formatted = GetFormattedInfix();
             return formatted;
         }
 
-        private static string FormatInfix(string infix)
+        private string GetFormattedInfix()
         {
-            var noSplitters = infix.ToCharArray().Select(char.ToLower).ToList();
+            var noSplitters = InfixNotation.ToCharArray().Select(char.ToLower).ToList();
             foreach (var splitter in Splitters)
                 noSplitters.RemoveAll(c => c == splitter);
             var result = string.Join("", noSplitters);
@@ -43,14 +44,12 @@ namespace ACALab2
             return result;
         }
 
-        private static void ProcessInfix()
+        private void ProcessInfix()
         {
-            
-        }
-
-        private static void ParseUnit(string line, int start, int end)
-        {
-            
+            for (var i = 0; i < InfixNotation.Length; i++)
+            {
+                
+            }
         }
     }
 }

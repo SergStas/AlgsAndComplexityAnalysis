@@ -2,22 +2,23 @@
 
 namespace ACALab2
 {
-    public partial class StringStack
+    public partial class CustomStack<T>
     {
         private static readonly Action<string> DefaultOutput = Console.WriteLine;
         
-        public static void ExecuteCommand(string query, StringStack stack, Action<string> output)
+        public static void ExecuteCommand(string query, CustomStack<T> stack, Action<string> output)
         {
             var tokens = query.Split(Splitters);
             foreach (var token in tokens)
                 ProcessToken(stack, token, output);
         }
 
-        public static void ExecuteCommand(string query, StringStack stack) => ExecuteCommand(query, stack, DefaultOutput);
+        public static void ExecuteCommand(string query, CustomStack<T> stack) => ExecuteCommand(query, stack, DefaultOutput);
         
-        private static void ProcessToken(StringStack stack, string token, Action<string> output)
+        private static void ProcessToken(CustomStack<T> stack, string token, Action<string> output)
         {
-            var value = token.Length == 1 ? null : token.Substring(2);
+            var str = token.Length == 1 ? null : token.Substring(2);
+            var value = (T)TryParse(str);
             var command = int.Parse(token[0].ToString());
             switch (command)
             {
@@ -25,10 +26,10 @@ namespace ACALab2
                     stack.Push(value);
                     break;
                 case 2:
-                    output(stack.Pop());
+                    output(stack.Pop()?.ToString());
                     break;
                 case 3:
-                    output(stack.Top());
+                    output(stack.Top()?.ToString());
                     break;
                 case 4:
                     output(stack.IsEmpty.ToString());

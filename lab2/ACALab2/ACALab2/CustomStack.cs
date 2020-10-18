@@ -5,26 +5,26 @@ using System.Linq;
 
 namespace ACALab2
 {
-    public partial class StringStack
+    public partial class CustomStack<T>
     {
         public bool IsEmpty => _content.Count == 0;
         public int Count => _content.Count;
         
-        private readonly List<string> _content = new List<string>();
+        private readonly List<T> _content = new List<T>();
 
         private static readonly char[] Splitters = {' ', '\t', '\n'};
         
-        public StringStack(){}
+        public CustomStack(){}
         
-        public StringStack(string inputRow)
+        public CustomStack(string inputRow)
         {
             var content = ParseContent(inputRow);
             _content = content;
         }
 
-        public StringStack(string row, bool fromFile)
+        public CustomStack(string row, bool fromFile)
         {
-            List<string> content;
+            List<T> content;
             if (fromFile)
             {
                 var raw = File.ReadAllText(row).ToCharArray().ToList();
@@ -36,9 +36,9 @@ namespace ACALab2
             _content = content;
         }
 
-        public void Push(string e) => _content.Add(e);
+        public void Push(T e) => _content.Add(e);
 
-        public string Pop()
+        public T Pop()
         {
             var result = Top();
             if (!IsEmpty)
@@ -46,13 +46,30 @@ namespace ACALab2
             return result;
         }
 
-        public string Top() => IsEmpty ? null : _content[Count - 1];
+        public T Top() => IsEmpty ? default : _content[Count - 1];
 
         public void Print() => Print(Console.WriteLine);
 
         public void Print(Action<string> output) => output(string.Join(' ', _content));
 
-        private static List<string> ParseContent(string row) => row.Split(Splitters).ToList();
+        private List<T> ParseContent(string row) => row.Split(Splitters).Select(e => (T)TryParse(e)).ToList();
+
+        private static object TryParse(string e)
+        {
+            if (typeof(T) == typeof(string))
+                return e;
+            if (double.TryParse(e, out var d))
+                return d;
+            if (float.TryParse(e, out var f))
+                return f;
+            if (int.TryParse(e, out var i))
+                return i;
+            if (bool.TryParse(e, out var b))
+                return b;
+            if (char.TryParse(e, out var c))
+                return c;
+            throw new NotImplementedException();
+        }
 
         public override string ToString() => $"StringStack[{Count}]: {string.Join(' ', _content)}";
     }

@@ -24,14 +24,14 @@ namespace ACALab2
             for (var i = 0; i < lines.Length; i++)
             {
                 Console.WriteLine($"Launch#{i + 1}, command line - \"{lines[i]}\"");
-                StringStack.ExecuteCommand(lines[i], new StringStack());
+                CustomStack<string>.ExecuteCommand(lines[i], new CustomStack<string>());
                 Console.WriteLine("\n==============================");
             }
         }
 
         private static void CheckBasicFunctional()
         {
-            var s = new StringStack();
+            var s = new CustomStack<string>();
             s.Print();
             Console.WriteLine(s);
             Console.WriteLine(s.IsEmpty);
@@ -52,11 +52,11 @@ namespace ACALab2
             s.Print();
             Console.WriteLine(s.IsEmpty);
             s.Pop();
-            var s0 = new StringStack(BasicTestsPath, true);
+            var s0 = new CustomStack<string>(BasicTestsPath, true);
             Console.WriteLine(s0);
             Console.WriteLine(s0.Pop());
             Console.WriteLine(s0);
-            var s1 = new StringStack(Console.ReadLine());
+            var s1 = new CustomStack<string>(Console.ReadLine());
             Console.WriteLine(s1);
             Console.WriteLine(s1.Pop());
             Console.WriteLine(s1);
