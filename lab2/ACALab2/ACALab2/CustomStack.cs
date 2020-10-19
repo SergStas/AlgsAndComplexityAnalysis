@@ -78,11 +78,8 @@ namespace ACALab2
             foreach (var e in _content)
                 yield return e;
         }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public override string ToString() => $"Stack[{Count}]: {string.Join(' ', _content)}";
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
     }
 }

@@ -3,9 +3,8 @@ using System.IO;
 
 namespace ACALab2
 {
-    internal static class Program
+    public class Program
     {
-        
         private static void Main()
         {
             FunctionalCheck.CheckInfixConvert();

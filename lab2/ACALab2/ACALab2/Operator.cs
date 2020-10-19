@@ -31,9 +31,6 @@ namespace ACALab2
             Priority = priority;
         }
 
-        public double Execute(double first, double second) => Execute(first, second, _ => { });
-        public double Execute(double first) => Execute(first, _ => { });
-
         public double Execute(double first, double second, Action<string> log)
         {
             if (!IsBinary)

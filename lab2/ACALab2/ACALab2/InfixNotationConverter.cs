@@ -8,7 +8,7 @@ namespace ACALab2
     public class InfixNotationConverter
     {
         public string InfixNotation { get; private set; }
-        public CustomStack<string> Tokens { get; } = new CustomStack<string>();
+        public List<string> Tokens { get; } = new List<string>();
         public Dictionary<string, double> Variables { get; } = new Dictionary<string, double>();
         
         private static List<char> Alphabet => Enumerable.Range('a', 'z').Select(i => (char) i).ToList();
@@ -28,7 +28,7 @@ namespace ACALab2
         }
         
         public string GetPostfixString(char splitter) =>
-            string.Join(splitter, Tokens.ToString().Split(' ').Skip(1));
+            string.Join(splitter, Tokens);
 
         private void ReadInput(string path)
         {
@@ -68,8 +68,8 @@ namespace ACALab2
             for (var i = 0; i < formatted.Length; i++)
             {
                 var curChar = formatted[i];
-                if (char.IsDigit(curChar) || Alphabet.Contains(curChar) || curChar == ',' || curChar == '.' ||
-                    curChar == '-' && (i == 0 || Operators.Contains(formatted[i - 1])))
+                var isNegativeMultiplier = curChar == '-' && (i == 0 || Operators.Contains(formatted[i - 1]));
+                if (char.IsDigit(curChar) || Alphabet.Contains(curChar) || curChar == ','|| isNegativeMultiplier)
                 {
                     operand += curChar;
                     isOperand = true;
@@ -77,12 +77,12 @@ namespace ACALab2
                 else if (Operators.Contains(curChar))
                     ProcessOperator(ref operand, ref isOperand, curChar);
                 else 
-                    throw new FormatException();
+                    throw new FormatException($"Unresolved symbol {curChar} in token {operand}");
             }
             if (isOperand)
                 ProcessEndOfToken(ref operand, ref isOperand);
             while (!_operators.IsEmpty)
-                Tokens.Push(_operators.Pop().Notation);
+                Tokens.Add(_operators.Pop().Notation);
         }
 
         private void ProcessOperator(ref string operand, ref bool isOperand, char curChar)
@@ -95,7 +95,7 @@ namespace ACALab2
             else
             {
                 while (op.Alias != '(' && op.IsBinary && !_operators.IsEmpty && _operators.Top().Priority >= op.Priority)
-                    Tokens.Push(_operators.Pop().Notation);
+                    Tokens.Add(_operators.Pop().Notation);
                 _operators.Push(op);
             }
         }
@@ -103,7 +103,7 @@ namespace ACALab2
         private void ProcessParentheses()
         {
             while (_operators.Top().Alias != '(')
-                Tokens.Push(_operators.Pop().Notation);
+                Tokens.Add(_operators.Pop().Notation);
             _operators.Pop();
         }
 
@@ -113,7 +113,7 @@ namespace ACALab2
                 throw new Exception($"Unresolved token {operand}");
             if (operand.ToCharArray().All(Alphabet.Contains))
                 Variables[operand] = 0;
-            Tokens.Push(operand);
+            Tokens.Add(operand);
             isOperand = false;
             operand = "";
         }

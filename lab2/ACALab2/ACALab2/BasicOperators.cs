@@ -5,7 +5,7 @@ namespace ACALab2
 {
     public static class BasicOperators
     {
-        public static List<Operator> FullCollection => new List<Operator>
+        public static IEnumerable<Operator> FullCollection => new List<Operator>
         {
             Add, Sub, Mp, Div, Pov, Sin, Cos, Ln, Sqrt, OpPar, ClPar
         };
