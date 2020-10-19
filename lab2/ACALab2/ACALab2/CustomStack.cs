@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace ACALab2
 {
-    public partial class CustomStack<T>
+    public partial class CustomStack<T> : IEnumerable<T>
     {
         public bool IsEmpty => _content.Count == 0;
         public int Count => _content.Count;
@@ -72,6 +73,16 @@ namespace ACALab2
             throw new InvalidEnumArgumentException();
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (var e in _content)
+                yield return e;
+        }
+
         public override string ToString() => $"Stack[{Count}]: {string.Join(' ', _content)}";
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

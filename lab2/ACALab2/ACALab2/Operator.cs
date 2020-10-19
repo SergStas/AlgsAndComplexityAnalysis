@@ -31,17 +31,22 @@ namespace ACALab2
             Priority = priority;
         }
 
-        public double Execute(double first, double second)
+        public double Execute(double first, double second) => Execute(first, second, _ => { });
+        public double Execute(double first) => Execute(first, _ => { });
+
+        public double Execute(double first, double second, Action<string> log)
         {
             if (!IsBinary)
                 throw new ArgumentException();
+            log($"{first} {Notation} {second}");
             return _bi(first, second);
         }
 
-        public double Execute(double first)
+        public double Execute(double first, Action<string> log)
         {
             if (IsBinary)
                 throw new ArgumentException();
+            log($"{Notation}({first})");
             return _uno(first);
         }
 

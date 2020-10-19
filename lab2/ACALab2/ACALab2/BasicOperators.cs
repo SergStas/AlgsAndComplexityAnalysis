@@ -32,7 +32,7 @@ namespace ACALab2
             new Operator("Cos", '$', 3, Math.Cos);
 
         private static readonly Operator Ln = 
-            new Operator("Ln", '%', 3, a => Math.Log(Math.E, a));
+            new Operator("Ln", '%', 3, a => Math.Log(a));
 
         private static readonly Operator Sqrt = 
             new Operator("Sqrt", '&', 3, Math.Sqrt);

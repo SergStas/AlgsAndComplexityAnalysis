@@ -13,12 +13,18 @@ namespace ACALab2
         {
             foreach (var path in Directory.EnumerateFiles(InfixInputDirectoryPath))
             {
+                Console.WriteLine("================");
                 Console.WriteLine($"Case \"{path}\":");
+                Console.WriteLine("----------------");
                 var converter = new InfixNotationConverter(path);
                 Console.WriteLine($"Infix: \"{converter.InfixNotation}\"");
                 Console.WriteLine("Postfix: \"" + converter.GetPostfixString(' ') + "\"\nVariables:");
                 foreach (var (name, value) in converter.Variables)
                     Console.WriteLine($"\t{name} = {value};");
+                Console.WriteLine("Operations sequence:");
+                var counter = 0;
+                Console.WriteLine("----------------\nCalculation result: " +
+                    $"{new PostfixNotationCalculator(converter).Calculate(s => Console.WriteLine($"#{counter++}: {s}"))}");
                 Console.WriteLine();
             }
         }
