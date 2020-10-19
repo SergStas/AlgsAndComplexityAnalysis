@@ -7,7 +7,7 @@ namespace ACALab2
     {
         public static List<Operator> FullCollection => new List<Operator>
         {
-            Add, Sub, Mp, Div, Pov, Sin, Cos, Ln, Sqrt
+            Add, Sub, Mp, Div, Pov, Sin, Cos, Ln, Sqrt, OpPar, ClPar
         };
         
         private static readonly Operator Add = 
@@ -36,5 +36,11 @@ namespace ACALab2
 
         private static readonly Operator Sqrt = 
             new Operator("Sqrt", '&', 3, Math.Sqrt);
+        
+        private static readonly Operator OpPar =
+            new Operator("(", '(', -1, _ => double.NaN);
+        
+        private static readonly Operator ClPar =
+            new Operator(")", ')', -1, _ => double.NaN);
     }
 }

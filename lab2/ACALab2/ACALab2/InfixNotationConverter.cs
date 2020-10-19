@@ -54,16 +54,29 @@ namespace ACALab2
                     var op = BasicOperators.FullCollection.First(o => o.Alias == curChar);
                     if (isOperand)
                         ProcessEndOfToken(ref operand, ref isOperand);
-                    while (op.IsBinary && !_operators.IsEmpty && _operators.Top().Priority >= op.Priority)
-                        _tokens.Push(_operators.Pop().Notation);
-                    _operators.Push(op);
+                    if (op.Alias == ')')
+                        ProcessParentheses();
+                    else
+                    {
+                        while (op.Alias != '(' && op.IsBinary && !_operators.IsEmpty && _operators.Top().Priority >= op.Priority)
+                            _tokens.Push(_operators.Pop().Notation);
+                        _operators.Push(op);
+                    }
                 }
                 else 
                     throw new FormatException();
             }
-            ProcessEndOfToken(ref operand, ref isOperand);
+            if (isOperand)
+                ProcessEndOfToken(ref operand, ref isOperand);
             while (!_operators.IsEmpty)
                 _tokens.Push(_operators.Pop().Notation);
+        }
+
+        private void ProcessParentheses()
+        {
+            while (_operators.Top().Alias != '(')
+                _tokens.Push(_operators.Pop().Notation);
+            _operators.Pop();
         }
 
         private void ProcessEndOfToken(ref string operand, ref bool isOperand)

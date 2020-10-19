@@ -14,7 +14,9 @@ namespace ACALab2
             "1 + 2 * 3",
             "2 / 2 ^ 3",
             "sqrt 12 + 4 - ln cos 45 + 3 * sin 2 ^ 5",
-            "1 + 2 * 3 / 4 - 1 + 2 + Ln 3 ^ 6"
+            "1 + 2 * 3 / 4 - 1 + 2 + Ln 3 ^ 6",
+            "1 + Cos(2 + 3 * (4 - 1))",
+            "ln(cos(3 + 8^(ln4)))"
         };
 
         public static void CheckInfixConvert()
