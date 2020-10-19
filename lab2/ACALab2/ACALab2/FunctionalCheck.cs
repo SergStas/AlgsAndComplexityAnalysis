@@ -7,27 +7,22 @@ namespace ACALab2
     {
         private const string BasicTestsPath = "instanceInit.txt";
         private const string InputCommandsPath = "input.txt";
-
-        private static readonly string[] InfixExpressions =
-        {
-            "1 + 2",
-            "1 + 2 * 3",
-            "2 / 2 ^ 3",
-            "sqrt 12 + 4 - ln cos 45 + 3 * sin 2 ^ 5",
-            "1 + 2 * 3 / 4 - 1 + 2 + Ln 3 ^ 6",
-            "1 + Cos(2 + 3 * (4 - 1))",
-            "ln(cos(3 + 8^(ln4)))"
-        };
+        private const string InfixInputDirectoryPath = "infix";
 
         public static void CheckInfixConvert()
         {
-            foreach (var infix in InfixExpressions)
+            foreach (var path in Directory.EnumerateFiles(InfixInputDirectoryPath))
             {
-                Console.WriteLine($"Case \"{infix}\":");
-                Console.WriteLine(new InfixNotationConverter(infix).ConvertToPostfix() + '\n');
+                Console.WriteLine($"Case \"{path}\":");
+                var converter = new InfixNotationConverter(path);
+                Console.WriteLine($"Infix: \"{converter.InfixNotation}\"");
+                Console.WriteLine("Postfix: \"" + converter.GetPostfixString(' ') + "\"\nVariables:");
+                foreach (var (name, value) in converter.Variables)
+                    Console.WriteLine($"\t{name} = {value};");
+                Console.WriteLine();
             }
         }
-
+        
         public static void CheckInputQueries()
         {
             var lines = File.ReadAllLines(InputCommandsPath);
