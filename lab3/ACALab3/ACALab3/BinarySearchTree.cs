@@ -35,10 +35,29 @@ namespace ACALab3
             if (!Contains(value))
                 return;
             var node = _root;
-            while (node.Value.CompareTo(value) != 0)
+            
+            while (node.DirectionOf(value).Value.CompareTo(value) != 0)
                 node = node.DirectionOf(value);
             if (node.Left == null && node.Right == null)
                 //node.
+        }
+
+        private void DetachNode(TreeNode<TTree> parent, TreeNode<TTree> node)
+        {
+            var isLeft = parent?.Value.CompareTo(node.Value) <= 0;
+            var left = node.Left;
+            var right = node.Right;
+            if (isLeft)
+                parent.DetachLeft();
+            else
+                parent?.DetachRight();
+            if (left == null && right == null && parent == null)
+                _root = null;
+            else if (left == null ^ right == null)
+                if (parent == null)
+                    _root = left == null ? right : null;
+                else if (left == null)
+                    
         }
         
         

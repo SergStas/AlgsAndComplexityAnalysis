@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace ACALab2
 {
@@ -24,7 +25,10 @@ namespace ACALab2
                 Console.WriteLine($"Test \"{TestNames[i]}\":");
                 foreach (var size in CommandRepetitions)
                 {
-                    var result = Measurer.MeasureCommandExecuting(rows[i], new CustomStack<string>(), iterations);
+                    var builder = new StringBuilder(rows[i]);
+                    for (var j = 0; j < size; j++)
+                        builder.Append(" " + rows[i]);
+                    var result = Measurer.MeasureCommandExecuting(builder.ToString(), new CustomStack<string>(), iterations);
                     Console.WriteLine($"\tLength = {size}, time - {result} ms");
                     results.Add(result);
                 }

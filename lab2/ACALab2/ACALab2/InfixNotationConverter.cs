@@ -94,7 +94,8 @@ namespace ACALab2
                 ProcessParentheses();
             else
             {
-                while (op.Alias != '(' && op.IsBinary && !_operators.IsEmpty && _operators.Top().Priority >= op.Priority)
+                while (op.Alias != '(' && op.IsBinary && !_operators.IsEmpty 
+                       && _operators.Top().Priority >= op.Priority)
                     Tokens.Add(_operators.Pop().Notation);
                 _operators.Push(op);
             }

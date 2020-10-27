@@ -17,7 +17,6 @@ namespace ACALab2
         private static readonly char[] Splitters = {' ', '\t', '\n'};
         
         public CustomStack(){}
-        
         public CustomStack(string inputRow)
         {
             var content = ParseContent(inputRow);
@@ -56,7 +55,7 @@ namespace ACALab2
 
         private static List<T> ParseContent(string row) => row.Split(Splitters).Select(e => (T)TryParse(e)).ToList();
 
-        private static object TryParse(string e)
+        private static object TryParse(string e) 
         {
             if (typeof(T) == typeof(string))
                 return e;
