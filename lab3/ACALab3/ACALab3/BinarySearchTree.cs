@@ -6,17 +6,17 @@ namespace ACALab3
     {
         private TreeNode<TTree> _root;
 
-        public void Add(TTree value)
+        public void Add(TTree value) => Add(new TreeNode<TTree>(value), _root);
+        
+        private void Add(TreeNode<TTree> newNode, TreeNode<TTree> rootNode)
         {
-            var node = _root;
-            while (node?.DirectionOf(value) != null)
-                node = node.DirectionOf(value);
+            var node = rootNode;
+            while (node?.DirectionOf(newNode.Value) != null)
+                node = node.DirectionOf(newNode.Value);
             if (node == null)
-                _root = new TreeNode<TTree>(value);
-            else if (value.CompareTo(node.Value) <= 0)
-                node.AttachLeft(new TreeNode<TTree>(value));
+                _root = newNode;
             else
-                node.AttachRight(new TreeNode<TTree>(value));
+                node.Attach(newNode, newNode.Value.CompareTo(node.Value) <= 0);
         }
 
         public bool Contains(TTree value)
@@ -35,31 +35,41 @@ namespace ACALab3
             if (!Contains(value))
                 return;
             var node = _root;
-            
-            while (node.DirectionOf(value).Value.CompareTo(value) != 0)
-                node = node.DirectionOf(value);
-            if (node.Left == null && node.Right == null)
-                //node.
+            if (node.Value.CompareTo(value) == 0)
+                DetachNode(null, node);
+            else 
+                while (node.DirectionOf(value).Value.CompareTo(value) != 0)
+                    node = node.DirectionOf(value);
+            DetachNode(node, node.DirectionOf(value));
         }
 
         private void DetachNode(TreeNode<TTree> parent, TreeNode<TTree> node)
         {
-            var isLeft = parent?.Value.CompareTo(node.Value) <= 0;
-            var left = node.Left;
-            var right = node.Right;
-            if (isLeft)
-                parent.DetachLeft();
-            else
-                parent?.DetachRight();
-            if (left == null && right == null && parent == null)
-                _root = null;
-            else if (left == null ^ right == null)
-                if (parent == null)
-                    _root = left == null ? right : null;
-                else if (left == null)
-                    
+            if (parent == null)
+                DetachRoot();
+            if (node == null || parent == null)
+                return;
+            var isLeft = parent.Left == node;
+            parent.Detach(isLeft);
+            if (node.ChildrenCount == 1)
+                parent.Attach(node.Left ?? node.Right, isLeft);
+            if (node.ChildrenCount < 2)
+                return;
+            parent.Attach(node.Right, isLeft);
+            Add(node.Left, node.Right);
         }
-        
+
+        private void DetachRoot()
+        {
+            var root = _root;
+            _root = null;
+            if (root.ChildrenCount == 1)
+                _root = root.Left ?? root.Right;
+            if (root.ChildrenCount < 2)
+                return;
+            _root = root.Right;
+            Add(root.Left, root.Right);
+        }
         
         
         
@@ -79,12 +89,26 @@ namespace ACALab3
             public TreeNode<TNode> Right { get; private set; }
             public TNode Value { get; }
 
+            public int ChildrenCount => Left == null ? Right == null ? 0 : 1 : Right == null ? 1 : 2;
+
             public TreeNode(TNode value) => Value = value;
 
-            public void AttachLeft(TreeNode<TNode> value) => Left = value;
-            public void AttachRight(TreeNode<TNode> value) => Right = value;
-            public void DetachLeft() => Left = null;
-            public void DetachRight() => Right = null;
+            public void Attach(TreeNode<TNode> node, bool left)
+            {
+                if (left)
+                    Left = node;
+                else
+                    Right = node;
+            }
+
+            public void Detach(bool left)
+            {
+                if (left)
+                    Left = null;
+                else
+                    Right = null;
+            }
+
             public TreeNode<TNode> DirectionOf(TNode value) => value.CompareTo(Value) <= 0 ? Left : Right;
         }
     }
