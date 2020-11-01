@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Text;
+using static System.Console;
 
 namespace ACALab3
 {
@@ -6,7 +8,47 @@ namespace ACALab3
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            OutputEncoding = Encoding.UTF8;
+            var tree = new BinarySearchTree<int>();
+            tree.Draw();
+            for (var i = 0; i < 20; i += 4)
+            {
+                tree.Add(i);
+                tree.Draw();
+            }
+            for (var i = -1; i < 20; i += 4)
+            {
+                tree.Add(i);
+                tree.Draw();
+            }
+            foreach (var e in tree)
+                Write(e + " ");
+            tree.Draw();
+            WriteLine();
+            WriteLine(tree.Contains(-4));
+            WriteLine(tree.Contains(4));
+            WriteLine(tree.Contains(5));
+            tree.Remove(11);
+            tree.Draw();
+            tree.Remove(8);
+            tree.Draw();
+            tree.Remove(16);
+            tree.Draw();
+            tree.Remove(0);
+            tree.Draw();
+            foreach (var e in tree)
+                Write(e + " ");
+            WriteLine();
+            WriteLine();
+            WriteLine();
+            WriteLine();
+            var tree0 = new BinarySearchTree<int>();
+            for (var i = 0; i < 25; i++)
+                tree0.Add(new Random().Next(0, 50));
+            tree0.Draw();
+            foreach (var e in tree0)
+                Write(e + " ");
+            ReadLine();
         }
     }
 }

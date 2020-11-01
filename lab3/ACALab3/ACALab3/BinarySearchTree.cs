@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ACALab3
 {
-    public class BinarySearchTree<TTree> where TTree : IComparable
+    public partial class BinarySearchTree<T> : IEnumerable<T> where T : IComparable
     {
-        private TreeNode<TTree> _root;
+        private TreeNode<T> _root;
 
-        public void Add(TTree value) => Add(new TreeNode<TTree>(value), _root);
+        public void Add(T value) => Add(new TreeNode<T>(value), _root);
         
-        private void Add(TreeNode<TTree> newNode, TreeNode<TTree> rootNode)
+        private void Add(TreeNode<T> newNode, TreeNode<T> rootNode)
         {
             var node = rootNode;
             while (node?.DirectionOf(newNode.Value) != null)
@@ -19,7 +21,7 @@ namespace ACALab3
                 node.Attach(newNode, newNode.Value.CompareTo(node.Value) <= 0);
         }
 
-        public bool Contains(TTree value)
+        public bool Contains(T value)
         {
             var node = _root;
             while (node != null)
@@ -30,7 +32,7 @@ namespace ACALab3
             return false;
         }
 
-        public void Remove(TTree value)
+        public void Remove(T value)
         {
             if (!Contains(value))
                 return;
@@ -43,7 +45,7 @@ namespace ACALab3
             DetachNode(node, node.DirectionOf(value));
         }
 
-        private void DetachNode(TreeNode<TTree> parent, TreeNode<TTree> node)
+        private void DetachNode(TreeNode<T> parent, TreeNode<T> node)
         {
             if (parent == null)
                 DetachRoot();
@@ -70,19 +72,34 @@ namespace ACALab3
             _root = root.Right;
             Add(root.Left, root.Right);
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+        private IEnumerable<T> Enumerate()
+        {
+            var stack = new Stack<TreeNode<T>>();
+            FillStack(stack, _root);
+            while (stack.Count != 0)
+            {
+                var node = stack.Pop();
+                yield return node.Value;
+                if (node.Right != null)
+                    FillStack(stack, node.Right);
+            }
+        }
+
+        private static void FillStack(Stack<TreeNode<T>> stack, TreeNode<T> node)
+        {
+            stack.Push(node);
+            while (stack.Peek().Left != null)
+                stack.Push(stack.Peek().Left);
+        }
+
+        public IEnumerator<T> GetEnumerator() => Enumerate().GetEnumerator();
+
+        public override string ToString() =>
+            $"BinarySearchTree<{typeof(T)}>{(_root == null ? " (empty)" : $": [{_root}]")}";
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         private class TreeNode<TNode> where TNode: IComparable
         {
             public TreeNode<TNode> Left { get; private set; }
@@ -110,6 +127,14 @@ namespace ACALab3
             }
 
             public TreeNode<TNode> DirectionOf(TNode value) => value.CompareTo(Value) <= 0 ? Left : Right;
+
+            public override string ToString() =>
+                ChildrenCount switch
+                {
+                    0 => Value.ToString(),
+                    1 => (Left == null ? $"{Value}[{Right}]" : $"[{Left}]{Value}"),
+                    _ => $"[{Left}]{Value}[{Right}]"
+                };
         }
     }
 }
