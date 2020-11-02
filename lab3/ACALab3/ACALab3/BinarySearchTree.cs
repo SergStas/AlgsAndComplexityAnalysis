@@ -73,24 +73,59 @@ namespace ACALab3
             Add(root.Left, root.Right);
         }
 
+        public int CalculateDepth()
+        {
+            if (_root == null)
+                return 0;
+            var stack = new Stack<Tuple<TreeNode<T>, int>>();
+            var max = 0;
+            FillStack(stack, (_root, 1).ToTuple(),
+                s => (s.Peek().Item1.Left, s.Peek().Item2 + 1).ToTuple(),
+                s => s.Peek().Item1.Left != null);
+            while (stack.Count != 0)
+                MeasureDepthOfNodeFromStack(stack, ref max);
+            return max;
+        }
+
+        private static void MeasureDepthOfNodeFromStack(Stack<Tuple<TreeNode<T>, int>> stack, ref int max)
+        {
+            var (node, depth) = stack.Pop();
+            if (depth > max)
+                max = depth;
+            if (node.Right != null)
+                FillStack(stack, (node.Right, depth + 1).ToTuple(),
+                    s => (s.Peek().Item1.Left, s.Peek().Item2 + 1).ToTuple(),
+                    s => s.Peek().Item1.Left != null);
+        }
+
         private IEnumerable<T> Enumerate()
         {
             var stack = new Stack<TreeNode<T>>();
-            FillStack(stack, _root);
+            FillStack(stack, _root,
+                s => s.Peek().Left,
+                s => s.Peek().Left != null);
             while (stack.Count != 0)
-            {
-                var node = stack.Pop();
-                yield return node.Value;
-                if (node.Right != null)
-                    FillStack(stack, node.Right);
-            }
+                foreach (var e in EnumerateNodeFromStack(stack))
+                    yield return e;
         }
 
-        private static void FillStack(Stack<TreeNode<T>> stack, TreeNode<T> node)
+        private static IEnumerable<T> EnumerateNodeFromStack(Stack<TreeNode<T>> stack)
         {
-            stack.Push(node);
-            while (stack.Peek().Left != null)
-                stack.Push(stack.Peek().Left);
+            var node = stack.Pop();
+            yield return node.Value;
+            if (node.Right != null)
+                FillStack(stack, node.Right,
+                    s => s.Peek().Left,
+                    s => s.Peek().Left != null);
+        } 
+
+        private static void FillStack<TContent>(Stack<TContent> stack, TContent startItem, 
+            Func<Stack<TContent>, TContent> newItem, 
+            Func<Stack<TContent>, bool> predicate)
+        {
+            stack.Push(startItem);
+            while (predicate(stack))
+                stack.Push(newItem(stack));
         }
 
         public IEnumerator<T> GetEnumerator() => Enumerate().GetEnumerator();

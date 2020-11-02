@@ -15,27 +15,34 @@ namespace ACALab3
             {
                 tree.Add(i);
                 tree.Draw();
+                WriteLine(tree.CalculateDepth());
             }
             for (var i = -1; i < 20; i += 4)
             {
                 tree.Add(i);
                 tree.Draw();
+                WriteLine(tree.CalculateDepth());
             }
             foreach (var e in tree)
                 Write(e + " ");
             tree.Draw();
+            WriteLine(tree.CalculateDepth());
             WriteLine();
             WriteLine(tree.Contains(-4));
             WriteLine(tree.Contains(4));
             WriteLine(tree.Contains(5));
             tree.Remove(11);
             tree.Draw();
+            WriteLine(tree.CalculateDepth());
             tree.Remove(8);
             tree.Draw();
+            WriteLine(tree.CalculateDepth());
             tree.Remove(16);
             tree.Draw();
+            WriteLine(tree.CalculateDepth());
             tree.Remove(0);
             tree.Draw();
+            WriteLine(tree.CalculateDepth());
             foreach (var e in tree)
                 Write(e + " ");
             WriteLine();
@@ -46,6 +53,7 @@ namespace ACALab3
             for (var i = 0; i < 25; i++)
                 tree0.Add(new Random().Next(0, 50));
             tree0.Draw();
+            WriteLine(tree0.CalculateDepth());
             foreach (var e in tree0)
                 Write(e + " ");
             ReadLine();
