@@ -9,7 +9,9 @@ namespace ACALab3
         static void Main(string[] args)
         {
             OutputEncoding = Encoding.UTF8;
-            FirstPart.DoWork(false);
+            /*FirstPart.DoWork(false);
+            ReadLine();*/
+            SecondPart.DoWork();
             ReadLine();
             CheckBasicFunctional();
             ReadLine();
