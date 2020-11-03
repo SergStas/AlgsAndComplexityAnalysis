@@ -9,6 +9,14 @@ namespace ACALab3
         static void Main(string[] args)
         {
             OutputEncoding = Encoding.UTF8;
+            FirstPart.DoWork(false);
+            ReadLine();
+            CheckBasicFunctional();
+            ReadLine();
+        }
+
+        private static void CheckBasicFunctional()
+        {
             var tree = new BinarySearchTree<int>();
             tree.Draw();
             for (var i = 0; i < 20; i += 4)
@@ -56,7 +64,6 @@ namespace ACALab3
             WriteLine(tree0.CalculateDepth());
             foreach (var e in tree0)
                 Write(e + " ");
-            ReadLine();
         }
     }
 }
