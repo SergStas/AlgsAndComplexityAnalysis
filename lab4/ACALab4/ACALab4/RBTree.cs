@@ -2,7 +2,7 @@
 
 namespace ACALab4
 {
-    public class RBTree
+    public partial class RBTree
     {
         private Node _root;
         
@@ -11,12 +11,14 @@ namespace ACALab4
             var node = _root;
             while (node != null && !node.DirectionOf(key).IsNil)
                 node = node.DirectionOf(key);
-            var result = new Node(key, node) {IsBlack = _root is null};
+            var result = new Node(key, node) {IsBlack = _root is null, IsRoot = _root is null};
             if (node == null)
                 _root = result;
             else
                 node.InsertChild(result);
             result.Balance();
+            if (!_root.IsRoot)
+                _root = result.Root;
         }
 
         public Node Find(int key)
@@ -62,14 +64,17 @@ namespace ACALab4
 
         public class Node
         {
-            public int Key { get; set; }
+            public int Key { get; }
             public bool IsBlack { get; set; }
-            public bool IsNil { get; set; }
+            public bool IsNil { get; }
             public Node Parent { get; set; }
             public bool IsLeft { get; set; }
+            public bool IsRoot { get; set; }
             public Node Left { get; set; }
             public Node Right { get; set; }
 
+            public Node Root => IsRoot ? this : Parent.Root;
+            public int ChildrenCount => IsNil ? 0 : Left.IsNil ? Right.IsNil ? 0 : 1 : Right.IsNil ? 1 : 2;
             private Node Uncle => Parent is null ? null : Parent.IsLeft ? Parent.Parent?.Right : Parent.Parent?.Left;
             
             public Node(int key, Node parent)
@@ -89,13 +94,15 @@ namespace ACALab4
 
             public Node DirectionOf(int key) => key <= Key ? Left : Right;
 
-            public void InsertChild(Node node)
+            public void InsertChild(Node node) => InsertChild(node, node.Key <= Key);
+
+            private void InsertChild(Node node, bool left)
             {
-                if (node.Key <= Key)
+                if (left)
                     Left = node;
                 else
                     Right = node;
-                node.IsLeft = node.Key <= Key;
+                node.IsLeft = left;
             }
 
             public void Balance()
@@ -105,7 +112,7 @@ namespace ACALab4
                 if (!Uncle.IsBlack)
                 {
                     Parent.IsBlack = Uncle.IsBlack = true;
-                    Parent.Parent.IsBlack = false;
+                    Parent.Parent.IsBlack = Parent.Parent.IsRoot;
                     Parent.Parent.Balance();
                     return;
                 }
@@ -124,11 +131,20 @@ namespace ACALab4
             {
                 var g = Parent.Parent;
                 var p = Parent;
-                g.InsertChild(right ? p.Right : p.Left);
+                g.InsertChild(right ? p.Right : p.Left, right);
                 p.InsertChild(g);
+                g.Parent?.InsertChild(p);
+                p.Parent = g.Parent;
+                g.Parent = p;
                 g.IsBlack = false;
                 p.IsBlack = true;
+                p.IsRoot = g.IsRoot;
+                g.IsRoot = false;
             }
+
+            public override string ToString() =>
+                IsNil ? "NIL" : $"{(IsBlack ? 'B' : 'R')}{Key}: {(Left.IsNil ? "NIL" : (Left.IsBlack ? "B" : "R") + Left.Key)}" + 
+                $", {(Right.IsNil ? "NIL" : (Right.IsBlack ? "B" : "R") + Right.Key.ToString())}";
         }
     }
 }

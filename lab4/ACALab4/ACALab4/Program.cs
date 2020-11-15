@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Text;
+using static System.Console;
 
 namespace ACALab4
 {
@@ -6,7 +7,15 @@ namespace ACALab4
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            OutputEncoding = Encoding.UTF8;
+            var tree = new RBTree();
+            tree.Draw();
+            for (var i = 0; i < 20; i++)
+            {
+                tree.Add(i);
+                tree.Draw();
+            }
+            ReadLine();
         }
     }
 }
