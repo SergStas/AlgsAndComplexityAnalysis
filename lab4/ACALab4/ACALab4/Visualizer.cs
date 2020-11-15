@@ -8,11 +8,12 @@ namespace ACALab4
     public partial class RBTree
     {
         private static readonly char[] Borders = {'┗', '┣', '┃', '━'};
-        private const int StartLine = 0;
+        private static int StartLine;
 
         private static readonly Dictionary<int, Tuple<ConsoleColor, ConsoleColor>> Coloring =
             new Dictionary<int, Tuple<ConsoleColor, ConsoleColor>>
             {
+                {-1, (Black, White).ToTuple()},
                 {0, (DarkGray, White).ToTuple()},
                 {1, (White, Red).ToTuple()},
                 {2, (White, Black).ToTuple()}
@@ -21,18 +22,19 @@ namespace ACALab4
         public void Draw()
         {
             ClearConsole();
-            if (_root == null)
-                return;
-            var stack = new Stack<Tuple<Node, int, int, bool>>();
-            stack.Push((_root, 0, StartLine, false).ToTuple());
-            var depth = StartLine;
-            while (stack.Count != 0)
-                DrawNode(stack, ref depth);
-            WriteLine();
-            ForegroundColor = White;
-            BackgroundColor = Black;
-            ReadLine();
+            if (_root != null)
+            {
+                var stack = new Stack<Tuple<Node, int, int, bool>>();
+                stack.Push((_root, 0, StartLine, false).ToTuple());
+                var depth = StartLine;
+                while (stack.Count != 0)
+                    DrawNode(stack, ref depth);
+            }
+            ForegroundColor = Coloring[-1].Item1;
+            BackgroundColor = Coloring[-1].Item2;
         }
+
+        public static void SetDrawingStartingLine(int n) => StartLine = n;
 
         private static void ClearConsole()
         {

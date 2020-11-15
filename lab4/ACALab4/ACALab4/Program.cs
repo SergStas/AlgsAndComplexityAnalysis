@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Text;
 using static System.Console;
 
@@ -9,7 +9,8 @@ namespace ACALab4
         static void Main(string[] args)
         {
             OutputEncoding = Encoding.UTF8;
-            var tree = new RBTree();
+            new ConsoleInterface().Run();
+            /*var tree = new RBTree();
             tree.Draw();
             for (var i = 0; i < 20; i++)
                 tree.Add(i);
@@ -31,7 +32,7 @@ namespace ACALab4
             e(tree, 0);
             e(tree, 19);
             WriteLine();
-            ReadLine();
+            ReadLine();*/
         }
         static void e(RBTree tree, int k) => WriteLine(tree.FindNext(k) + " " + tree.FindPrev(k));
     }
