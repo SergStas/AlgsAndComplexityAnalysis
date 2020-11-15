@@ -32,12 +32,12 @@ namespace ACALab4
             return null;
         }
 
-        public int? FindMin() => FindBorderKey(true);
-        public int? FindMax() => FindBorderKey(false); 
+        public int? FindMin() => FindBorderKey(true, _root);
+        public int? FindMax() => FindBorderKey(false, _root); 
 
-        private int? FindBorderKey(bool min)
+        private int? FindBorderKey(bool min, Node root)
         {
-            var node = _root;
+            var node = root;
             while (node != null && (min ? !node.Left.IsNil : !node.Right.IsNil))
                 node = min ? node.Left : node.Right;
             return node?.Key;
@@ -53,13 +53,13 @@ namespace ACALab4
                 return null;
             var lastIteration = false;
             if (next ? !node.Right.IsNil : !node.Left.IsNil)
-                return next ? node.Right.Key : node.Left.Key;
+                return next ? FindBorderKey(true, node.Right) : FindBorderKey(false, node.Left);
             while (node.Parent != null && !lastIteration)
             {
                 lastIteration = next == node.IsLeft;
                 node = node.Parent;
             }
-            return node?.Key;
+            return lastIteration ? node?.Key : null;
         }
 
         public class Node

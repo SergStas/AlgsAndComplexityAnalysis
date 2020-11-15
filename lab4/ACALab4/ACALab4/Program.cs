@@ -13,9 +13,19 @@ namespace ACALab4
             for (var i = 0; i < 20; i++)
             {
                 tree.Add(i);
-                tree.Draw();
             }
+            tree.Draw();
+            WriteLine(tree.FindMin());
+            WriteLine(tree.FindMax());
+            e(tree, 5);
+            e(tree, 3);
+            e(tree, 12);
+            e(tree, 7);
+            e(tree, 0);
+            e(tree, 19);
+            WriteLine();
             ReadLine();
         }
+        static void e(RBTree tree, int k) => WriteLine(tree.FindNext(k) + " " + tree.FindPrev(k));
     }
 }
