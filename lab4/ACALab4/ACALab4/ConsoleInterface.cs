@@ -17,14 +17,15 @@ namespace ACALab4
             "Command '{0}' requires argument. Use in form 'code arg'",
             "Unable to resolve arg in command '{0}'",
             "Command done successfully with result '{0}'",
-            "Command '{0}' returned no result"
+            "Command '{0}' returned no result",
+            "Key '{0}' is already added"
         };
         private CommandState _state = CommandState.Init;
         private const int BordersLength = 100;
 
         private static readonly Dictionary<int, Func<RBTree, int, Tuple<bool, bool, int>>> Commands = new Dictionary<int, Func<RBTree, int, Tuple<bool, bool, int>>> 
         {
-            {1, (tree, key) => {tree.Add(key); return (true, false, 0).ToTuple();}},
+            {1, (tree, key) => (tree.Add(key), false, 0).ToTuple()},
             {2, (tree, key) => (tree.Remove(key), false, 0).ToTuple()},
             {3, (tree, key) => (true, true, tree.Find(key).Key).ToTuple()},
             {4, (tree, _) => (tree.FindMin() != null, true, tree.FindMin() ?? 0).ToTuple()},
@@ -69,18 +70,26 @@ namespace ACALab4
                 var (success, hasResult, result) = Commands[code](_tree, arg);
                 if (success && !hasResult)
                     _state = CommandState.Ok;
-                else if (code == 2 && !success)
+                else switch (code)
                 {
-                    _state = CommandState.KeyNotFound;
-                    argument = parts[1];
+                    case 1 when !success:
+                        _state = CommandState.Duplicate;
+                        argument = parts[1];
+                        break;
+                    case 2 when !success:
+                        _state = CommandState.KeyNotFound;
+                        argument = parts[1];
+                        break;
+                    default:
+                        if (success)
+                        {
+                            _state = CommandState.Result;
+                            argument = result.ToString();
+                        }
+                        else
+                            _state = CommandState.NoResult;
+                        break;
                 }
-                else if (success)
-                {
-                    _state = CommandState.Result;
-                    argument = result.ToString();
-                }
-                else
-                    _state = CommandState.NoResult;
             }
         }
 
@@ -99,12 +108,12 @@ namespace ACALab4
         private void PresetTree()
         {
             for (var i = 0; i < 20; i++)
-                _tree.Add(i);
+                _tree.Add(new Random().Next(1, 101));
         }
         
         private enum CommandState
         {
-            Init, Ok, InvalidCommand, KeyNotFound, Help, ArgumentRequired, UnresolvedArgument, Result, NoResult
+            Init, Ok, InvalidCommand, KeyNotFound, Help, ArgumentRequired, UnresolvedArgument, Result, NoResult, Duplicate
         }
     }
 }

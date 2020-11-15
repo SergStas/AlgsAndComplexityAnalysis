@@ -4,8 +4,10 @@
     {
         private Node _root;
         
-        public void Add(int key)
+        public bool Add(int key)
         {
+            if (Find(key) != null)
+                return false;
             var node = _root;
             while (_root != null && !node.DirectionOf(key).IsNil)
                 node = node.DirectionOf(key);
@@ -14,6 +16,7 @@
             else node.InsertChild(result);
             result.BalanceAfterAdding();
             if (!_root.IsRoot) _root = result.Root;
+            return true;
         }
 
         public bool Remove(int key) => Remove(Find(key));
@@ -159,13 +162,12 @@
                 }
                 if (IsLeft != Parent.IsLeft)
                 {
-                    var g = Parent.Parent;
-                    g.InsertChild(this);
-                    InsertChild(Parent);
-                    Parent.Parent = this;
-                    Parent = g;
+                    SmallRotate(IsLeft, this, Parent);
+                    LargeRotate(IsLeft, this, Parent);
                 }
-                LargeRotate(IsLeft);
+                else
+                    LargeRotate(IsLeft, Parent, Parent.Parent);
+                Parent?.SwapColors(IsLeft ? Parent.Right : Parent.Left); // FIXME
             }
 
             public void BalanceAfterRemoving()
@@ -211,6 +213,12 @@
                     p.BalanceAfterRemoving();
                 }
             }
+
+            private void Detach(Node node)
+            {
+                if (!node.IsNil)
+                    Detach(node.Key);
+            }
             
             public void Detach(int key)
             {
@@ -221,28 +229,28 @@
                     Right= new Node(this);
             }
 
-            private void LargeRotate(bool right)
+            private static void LargeRotate(bool right, Node a, Node b)
             {
-                var g = Parent.Parent;
-                var p = Parent;
-                var gp = g.Parent;
-                g.InsertChild(right ? p.Right : p.Left, right);
-                p.InsertChild(g);
-                gp?.InsertChild(p);
-                p.Parent = gp;
-                g.IsBlack = false;
-                p.IsBlack = true;
-                p.IsRoot = g.IsRoot;
-                g.IsRoot = false;
+                var p = b.Parent;
+                var c = right ? a.Right : a.Left;
+                a.Detach(c);
+                b.InsertChild(c, right);
+                a.InsertChild(b);
+                p?.InsertChild(a);
+                a.Parent = p;
+                a.IsRoot = b.IsRoot;
+                b.IsRoot = false;
             }
 
             private static void SmallRotate(bool right, Node a, Node b)
             {
-                var gp = b.Parent;
-                b.InsertChild(right ? a.Right : a.Left, right);
+                var p = b.Parent;
+                var c = right ? a.Right : a.Left;
+                a.Detach(c);
+                b.InsertChild(c, right);
                 a.InsertChild(b);
-                gp?.InsertChild(a);
-                a.Parent = gp;
+                p?.InsertChild(a);
+                a.Parent = p;
                 a.IsRoot = b.IsRoot;
                 b.IsRoot = false;
             }
