@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using static System.Console;
 
 namespace ACALab4
@@ -11,9 +12,15 @@ namespace ACALab4
             var tree = new RBTree();
             tree.Draw();
             for (var i = 0; i < 20; i++)
-            {
                 tree.Add(i);
-            }
+            tree.Draw();
+            ReadLine();
+
+            tree.Remove(6);
+            tree.Draw();
+            tree.Remove(4);
+            tree.Draw();
+            tree.Remove(5);
             tree.Draw();
             WriteLine(tree.FindMin());
             WriteLine(tree.FindMax());

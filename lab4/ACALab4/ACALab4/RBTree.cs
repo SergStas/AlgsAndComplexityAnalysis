@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace ACALab4
 {
@@ -9,16 +11,44 @@ namespace ACALab4
         public void Add(int key)
         {
             var node = _root;
-            while (node != null && !node.DirectionOf(key).IsNil)
+            while (_root != null && !node.DirectionOf(key).IsNil)
                 node = node.DirectionOf(key);
             var result = new Node(key, node) {IsBlack = _root is null, IsRoot = _root is null};
-            if (node == null)
-                _root = result;
+            if (_root == null) _root = result;
+            else node.InsertChild(result);
+            result.BalanceAfterAdding();
+            if (!_root.IsRoot) _root = result.Root;
+        }
+
+        public bool Remove(int key) => Remove(Find(key));
+
+        private bool Remove(Node node)
+        {
+            if (node is null) return false;
+            if (node.ChildrenCount == 2)
+            {
+                var prev = Find((int)FindPrev(node.Key));
+                node.SwapKeys(prev);
+                Remove(prev);
+            }
+            else if (node.IsBlack) RemoveBlack(node);
+            else node.Parent.Detach(node.Key);
+            return true;
+        }
+
+        private static void RemoveBlack(Node node)
+        {
+            if (node.ChildrenCount == 1)
+            {
+                var child = node.Left.IsNil ? node.Right : node.Left;
+                node.SwapKeys(child);
+                node.Detach(child.Key);
+            }
             else
-                node.InsertChild(result);
-            result.Balance();
-            if (!_root.IsRoot)
-                _root = result.Root;
+            {
+                node.BalanceAfterRemoving();
+                node.Parent.Detach(node.Key);
+            }
         }
 
         public Node Find(int key)
@@ -35,7 +65,7 @@ namespace ACALab4
         public int? FindMin() => FindBorderKey(true, _root);
         public int? FindMax() => FindBorderKey(false, _root); 
 
-        private int? FindBorderKey(bool min, Node root)
+        private static int? FindBorderKey(bool min, Node root)
         {
             var node = root;
             while (node != null && (min ? !node.Left.IsNil : !node.Right.IsNil))
@@ -64,7 +94,7 @@ namespace ACALab4
 
         public class Node
         {
-            public int Key { get; }
+            public int Key { get; private set; }
             public bool IsBlack { get; set; }
             public bool IsNil { get; }
             public Node Parent { get; set; }
@@ -92,6 +122,20 @@ namespace ACALab4
                 Parent = parent;
             }
 
+            public void SwapKeys(Node node)
+            {
+                var t = Key;
+                Key = node.Key;
+                node.Key = t;
+            }
+
+            public void SwapColors(Node node)
+            {
+                var t = node.IsBlack;
+                node.IsBlack = IsBlack;
+                IsBlack = t;
+            }
+
             public Node DirectionOf(int key) => key <= Key ? Left : Right;
 
             public void InsertChild(Node node) => InsertChild(node, node.Key <= Key);
@@ -102,10 +146,11 @@ namespace ACALab4
                     Left = node;
                 else
                     Right = node;
+                node.Parent = this;
                 node.IsLeft = left;
             }
 
-            public void Balance()
+            public void BalanceAfterAdding()
             {
                 if (Parent?.Parent is null || IsBlack)
                     return;
@@ -113,7 +158,7 @@ namespace ACALab4
                 {
                     Parent.IsBlack = Uncle.IsBlack = true;
                     Parent.Parent.IsBlack = Parent.Parent.IsRoot;
-                    Parent.Parent.Balance();
+                    Parent.Parent.BalanceAfterAdding();
                     return;
                 }
                 if (IsLeft != Parent.IsLeft)
@@ -124,22 +169,86 @@ namespace ACALab4
                     Parent.Parent = this;
                     Parent = g;
                 }
-                Rotate(IsLeft);
+                LargeRotate(IsLeft);
             }
 
-            private void Rotate(bool right)
+            public void BalanceAfterRemoving()
+            {
+                Node p = Parent, c = IsLeft ? p.Right : p.Left, ln = c.Left, rn = c.Right;
+                if (!p.IsBlack && c.IsBlack && ln.IsBlack && rn.IsBlack)
+                    p.SwapColors(c);
+                else if (!p.IsBlack && c.IsBlack && (IsLeft ? rn.IsBlack : ln.IsBlack))
+                {
+                    SmallRotate(!IsLeft, c, p);
+                    p.SwapColors(c);
+                    if (!IsLeft)
+                        c.Left.IsBlack = true;
+                    else
+                        c.Right.IsBlack = true;
+                }
+                else if (p.IsBlack && !c.IsBlack && (IsLeft ? ln.Left.IsBlack && ln.Right.IsBlack : rn.Left.IsBlack && rn.Right.IsBlack))
+                {
+                    SmallRotate(!IsLeft, c, p);
+                    c.SwapColors(IsLeft ? c.Left : c.Right);
+                }
+                else if (p.IsBlack && !c.IsBlack && (IsLeft ? !ln.Right.IsBlack : !rn.Left.IsBlack))
+                {
+                    SmallRotate(IsLeft, IsLeft ? ln : rn, c);
+                    SmallRotate(!IsLeft, IsLeft ? ln : rn, p);
+                    if (!IsLeft)
+                        rn.Left.IsBlack = true;
+                    else
+                        ln.Right.IsBlack = true;
+                }
+                else if (p.IsBlack && c.IsBlack && !c.IsNil && (IsLeft ? !ln.IsBlack : !rn.IsBlack))
+                {
+                    SmallRotate(IsLeft, IsLeft ? ln : rn, c);
+                    SmallRotate(!IsLeft, IsLeft ? ln : rn, p);
+                    if (!IsLeft)
+                        rn.IsBlack = true;
+                    else
+                        ln.IsBlack = true;
+                }
+                else
+                {
+                    c.IsBlack = true;
+                    p.BalanceAfterRemoving();
+                }
+            }
+            
+            public void Detach(int key)
+            {
+                DirectionOf(key).Parent = null;
+                if (key <= Key)
+                    Left = new Node(this);
+                else
+                    Right= new Node(this);
+            }
+
+            private void LargeRotate(bool right)
             {
                 var g = Parent.Parent;
                 var p = Parent;
+                var gp = g.Parent;
                 g.InsertChild(right ? p.Right : p.Left, right);
                 p.InsertChild(g);
-                g.Parent?.InsertChild(p);
-                p.Parent = g.Parent;
-                g.Parent = p;
+                gp?.InsertChild(p);
+                p.Parent = gp;
                 g.IsBlack = false;
                 p.IsBlack = true;
                 p.IsRoot = g.IsRoot;
                 g.IsRoot = false;
+            }
+
+            private static void SmallRotate(bool right, Node a, Node b)
+            {
+                var gp = b.Parent;
+                b.InsertChild(right ? a.Right : a.Left, right);
+                a.InsertChild(b);
+                gp?.InsertChild(a);
+                a.Parent = gp;
+                a.IsRoot = b.IsRoot;
+                b.IsRoot = false;
             }
 
             public override string ToString() =>

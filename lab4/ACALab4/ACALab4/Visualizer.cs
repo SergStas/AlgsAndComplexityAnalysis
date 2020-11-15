@@ -44,16 +44,17 @@ namespace ACALab4
         private static void DrawNode(Stack<Tuple<Node, int, int, bool>> stack, ref int depth)
         {
             var (node, x, y, last) = stack.Pop();
+            if (node is null)
+                return;
             while (y < depth)
                 WriteTo(Borders[2], x - 1, y++, 0);
             if (x != 0)
                 WriteTo(Borders[last ? 0 : 1], x - 1, y, 0);
-            var content = node is null ? "" : node.IsNil ? "NIL" : node.Key.ToString();
+            var content =  node.IsNil ? "NIL" : node.Key.ToString();
             WriteTo(x > 0 ? Borders[3].ToString() : "", x, depth, 0);
-            WriteTo(content, x > 0 ? x + 1 : x, depth, node is null ? 0 : node.IsBlack ? 2 : 1);
+            WriteTo(content, x > 0 ? x + 1 : x, depth,  node.IsBlack ? 2 : 1);
             depth++;
-            if (node == null || node.ChildrenCount == 0)
-                return;
+            if (node.ChildrenCount == 0) return; //comment to print nils 
             stack.Push((node.Left, x + (x > 0 ? 2 : 1), y + 2, true).ToTuple());
             stack.Push((node.Right, x + (x > 0 ? 2 : 1), y + 1, false).ToTuple());
         }
