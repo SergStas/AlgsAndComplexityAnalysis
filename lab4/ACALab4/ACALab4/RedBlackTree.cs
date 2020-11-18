@@ -1,6 +1,6 @@
 ﻿namespace ACALab4
 {
-    public partial class RBTree
+    public partial class RedBlackTree
     {
         private Node _root;
         
@@ -26,7 +26,7 @@
             if (node is null) return false;
             if (node.ChildrenCount == 2)
             {
-                var prev = Find((int)FindPrev(node.Key));
+                var prev = Find(FindPrev(node.Key));
                 node.SwapKeys(prev);
                 Remove(prev);
             }
@@ -42,16 +42,17 @@
                 var child = node.Left.IsNil ? node.Right : node.Left;
                 node.SwapKeys(child);
                 node.Detach(child.Key);
+                return;
             }
-            else
-            {
-                node.BalanceAfterRemoving();
-                node.Parent.Detach(node.Key);
-            }
+            node.BalanceAfterRemoving();
+            node.Parent.Detach(node.Key);
         }
 
-        public Node Find(int key)
+        public Node Find(int? nKey)
         {
+            if (nKey is null)
+                return null;
+            var key = (int) nKey;
             var node = _root;
             while (node != null && !node.IsNil)
                 if (node.Key == key)
@@ -72,11 +73,14 @@
             return node?.Key;
         }
 
-        public int? FindPrev(int key) => FindNeighbour(key, false);
-        public int? FindNext(int key) => FindNeighbour(key, true);
+        public int? FindPrev(int? key) => FindNeighbour(key, false);
+        public int? FindNext(int? key) => FindNeighbour(key, true);
 
-        private int? FindNeighbour(int key, bool next)
+        private int? FindNeighbour(int? nKey, bool next)
         {
+            if (nKey is null)
+                return null;
+            var key = (int) nKey;
             var node = Find(key);
             if (node is null)
                 return null;
@@ -96,11 +100,11 @@
             public int Key { get; private set; }
             public bool IsBlack { get; set; }
             public bool IsNil { get; }
-            public Node Parent { get; set; }
-            public bool IsLeft { get; set; }
+            public Node Parent { get; private set; }
+            public bool IsLeft { get; private set; }
             public bool IsRoot { get; set; }
-            public Node Left { get; set; }
-            public Node Right { get; set; }
+            public Node Left { get; private set; }
+            public Node Right { get; private set; }
 
             public Node Root => IsRoot ? this : Parent.Root;
             public int ChildrenCount => IsNil ? 0 : Left.IsNil ? Right.IsNil ? 0 : 1 : Right.IsNil ? 1 : 2;
@@ -128,7 +132,7 @@
                 node.Key = t;
             }
 
-            public void SwapColors(Node node)
+            private void SwapColors(Node node)
             {
                 var t = node.IsBlack;
                 node.IsBlack = IsBlack;
@@ -162,12 +166,17 @@
                 }
                 if (IsLeft != Parent.IsLeft)
                 {
-                    SmallRotate(IsLeft, this, Parent);
-                    LargeRotate(IsLeft, this, Parent);
+                    var p = Parent;
+                    Rotate(IsLeft, this, Parent);
+                    var g = Parent;
+                    Rotate(IsLeft, p, this);
+                    SwapColors(g);
                 }
                 else
-                    LargeRotate(IsLeft, Parent, Parent.Parent);
-                Parent?.SwapColors(IsLeft ? Parent.Right : Parent.Left); // FIXME
+                {
+                    Rotate(IsLeft, Parent, Parent.Parent);
+                    Parent?.SwapColors(IsLeft ? Parent.Right : Parent.Left);
+                }
             }
 
             public void BalanceAfterRemoving()
@@ -177,7 +186,7 @@
                     p.SwapColors(c);
                 else if (!p.IsBlack && c.IsBlack && (IsLeft ? rn.IsBlack : ln.IsBlack))
                 {
-                    SmallRotate(!IsLeft, c, p);
+                    Rotate(!IsLeft, c, p);
                     p.SwapColors(c);
                     if (!IsLeft)
                         c.Left.IsBlack = true;
@@ -186,13 +195,13 @@
                 }
                 else if (p.IsBlack && !c.IsBlack && (IsLeft ? ln.Left.IsBlack && ln.Right.IsBlack : rn.Left.IsBlack && rn.Right.IsBlack))
                 {
-                    SmallRotate(!IsLeft, c, p);
+                    Rotate(!IsLeft, c, p);
                     c.SwapColors(IsLeft ? c.Left : c.Right);
                 }
                 else if (p.IsBlack && !c.IsBlack && (IsLeft ? !ln.Right.IsBlack : !rn.Left.IsBlack))
                 {
-                    SmallRotate(IsLeft, IsLeft ? ln : rn, c);
-                    SmallRotate(!IsLeft, IsLeft ? ln : rn, p);
+                    Rotate(IsLeft, IsLeft ? ln : rn, c);
+                    Rotate(!IsLeft, IsLeft ? ln : rn, p);
                     if (!IsLeft)
                         rn.Left.IsBlack = true;
                     else
@@ -200,8 +209,8 @@
                 }
                 else if (p.IsBlack && c.IsBlack && !c.IsNil && (IsLeft ? !ln.IsBlack : !rn.IsBlack))
                 {
-                    SmallRotate(IsLeft, IsLeft ? ln : rn, c);
-                    SmallRotate(!IsLeft, IsLeft ? ln : rn, p);
+                    Rotate(IsLeft, IsLeft ? ln : rn, c);
+                    Rotate(!IsLeft, IsLeft ? ln : rn, p);
                     if (!IsLeft)
                         rn.IsBlack = true;
                     else
@@ -229,20 +238,7 @@
                     Right= new Node(this);
             }
 
-            private static void LargeRotate(bool right, Node a, Node b)
-            {
-                var p = b.Parent;
-                var c = right ? a.Right : a.Left;
-                a.Detach(c);
-                b.InsertChild(c, right);
-                a.InsertChild(b);
-                p?.InsertChild(a);
-                a.Parent = p;
-                a.IsRoot = b.IsRoot;
-                b.IsRoot = false;
-            }
-
-            private static void SmallRotate(bool right, Node a, Node b)
+            private static void Rotate(bool right, Node a, Node b)
             {
                 var p = b.Parent;
                 var c = right ? a.Right : a.Left;
