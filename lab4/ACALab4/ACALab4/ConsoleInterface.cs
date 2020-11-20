@@ -122,6 +122,10 @@ namespace ACALab4
 
         private void PresetTree()
         {
+            _tree.Add(3);
+            _tree.Add(2);
+            _tree.Add(1);
+            _tree.Add(0);
             /*for (var i = 0; i < 20; i++)
                 _tree.Add(new Random().Next(1, 101));*/
         }

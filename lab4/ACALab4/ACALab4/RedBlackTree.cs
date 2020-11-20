@@ -16,6 +16,7 @@
             else node.InsertChild(result);
             result.BalanceAfterAdding();
             if (!_root.IsRoot) _root = result.Root;
+            _root.IsBlack = true;
             return true;
         }
 
@@ -175,7 +176,11 @@
                 else
                 {
                     Rotate(IsLeft, Parent, Parent.Parent);
-                    Parent?.SwapColors(IsLeft ? Parent.Right : Parent.Left);
+                    if (IsLeft)
+                        Parent.Right.IsBlack = false;
+                    else
+                        Parent.Left.IsBlack = false;
+                    Parent.IsBlack = true;
                 }
             }
 
