@@ -156,7 +156,7 @@
 
             public void BalanceAfterAdding()
             {
-                if (Parent?.Parent is null || IsBlack)
+                if (Parent?.Parent is null || Parent.IsBlack)
                     return;
                 if (!Uncle.IsBlack)
                 {
@@ -170,7 +170,7 @@
                     var p = Parent;
                     Rotate(IsLeft, this, Parent);
                     var g = Parent;
-                    Rotate(IsLeft, p, this);
+                    Rotate(IsLeft, this, g);
                     SwapColors(g);
                 }
                 else
