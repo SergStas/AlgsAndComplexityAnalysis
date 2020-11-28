@@ -9,12 +9,12 @@ namespace ACALab5
     public class TextProcessor
     {
         private readonly List<string> _tokens = new List<string>();
-        private static readonly char[] Splitters = {' ', ',', '.', ':', '-', '!', '?', ';', '\"', '(', ')', '#', '[', ']', '\t', '\n'};
+        private static readonly char[] Splitters = {' ', ',', '.', ':', '-', '!', '?', ';', '\"', '(', ')', '#', '[', ']', '\t', '\n', '_', '`', '\''};
 
         public IEnumerable<string> ReadTokens(string path)
         {
             var content = File.ReadAllText(path);
-            foreach (var e in content.Split(Splitters).Where(s => !string.IsNullOrEmpty(s))
+            foreach (var e in content.Split(Splitters).Where(s => s.Length > 1)
                 .Select(s => s.ToLower()))
                 yield return e;
         }
@@ -22,7 +22,7 @@ namespace ACALab5
         public void AddToDictionary(string path)
         {
             var content = File.ReadAllText(path);
-            foreach (var e in content.Split(Splitters).Where(s => !string.IsNullOrEmpty(s))
+            foreach (var e in content.Split(Splitters).Where(s => s.Length > 1)
                 .Select(s => s.ToLower()).Distinct())
                 if (!_tokens.Contains(e))
                     _tokens.Add(e);

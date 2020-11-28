@@ -5,8 +5,8 @@
         public static void BubbleSort(string[] arr)
         {
             for (var i = 0; i < arr.Length; i++)
-            for (var j = i; j < arr.Length; j++)
-                if (arr[j].CompareTo(arr[i]) < 0)
+            for (var j = 0; j < arr.Length; j++)
+                if (arr[j].CompareTo(arr[i]) > 0)
                 {
                     var t = arr[i];
                     arr[i] = arr[j];
