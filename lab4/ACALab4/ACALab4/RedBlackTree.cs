@@ -1,4 +1,6 @@
-﻿namespace ACALab4
+﻿using System.Collections.Generic;
+
+namespace ACALab4
 {
     public partial class RedBlackTree
     {
@@ -27,25 +29,34 @@
             if (node is null) return false;
             if (node.ChildrenCount == 2)
             {
-                var prev = Find(FindPrev(node.Key));
+                var prev = Find(FindBorderKey(false, node.Left));
                 node.SwapKeys(prev);
                 Remove(prev);
             }
             else if (node.IsBlack) RemoveBlack(node);
             else node.Parent.Detach(node.Key);
+            if (!_root.IsRoot) _root = _root.Root;
+            _root.IsBlack = true;
             return true;
         }
 
-        private static void RemoveBlack(Node node)
+        private void RemoveBlack(Node node)
         {
             if (node.ChildrenCount == 1)
             {
                 var child = node.Left.IsNil ? node.Right : node.Left;
-                node.SwapKeys(child);
+                child.IsBlack = true;
                 node.Detach(child.Key);
+                if (node.IsRoot)
+                {
+                    child.IsRoot = true;
+                    _root = child;
+                }
+                else
+                    node.Parent.InsertChild(child);
                 return;
             }
-            node.BalanceAfterRemoving();
+            node.BalanceBeforeRemoving();
             node.Parent.Detach(node.Key);
         }
 
@@ -167,21 +178,14 @@
                 }
                 if (IsLeft != Parent.IsLeft)
                 {
-                    var p = Parent;
                     Rotate(IsLeft, this, Parent);
                     var g = Parent;
-                    Rotate(IsLeft, this, g);
+                    Rotate(IsLeft, this, Parent);
                     SwapColors(g);
+                    return;
                 }
-                else
-                {
-                    Rotate(IsLeft, Parent, Parent.Parent);
-                    if (IsLeft)
-                        Parent.Right.IsBlack = false;
-                    else
-                        Parent.Left.IsBlack = false;
-                    Parent.IsBlack = true;
-                }
+                Rotate(IsLeft, Parent, Parent.Parent);
+                Parent.SwapColors(IsLeft ? Parent.Right : Parent.Left);
             }
 
             public void BalanceAfterRemoving()
@@ -189,7 +193,7 @@
                 Node p = Parent, c = IsLeft ? p.Right : p.Left, ln = c.Left, rn = c.Right;
                 if (!p.IsBlack && c.IsBlack && ln.IsBlack && rn.IsBlack)
                     p.SwapColors(c);
-                else if (!p.IsBlack && c.IsBlack && (IsLeft ? rn.IsBlack : ln.IsBlack))
+                else if (!p.IsBlack && c.IsBlack && !c.IsNil && (IsLeft ? !ln.IsBlack : !rn.IsBlack))
                 {
                     Rotate(!IsLeft, c, p);
                     p.SwapColors(c);
@@ -198,19 +202,22 @@
                     else
                         c.Right.IsBlack = true;
                 }
-                else if (p.IsBlack && !c.IsBlack && (IsLeft ? ln.Left.IsBlack && ln.Right.IsBlack : rn.Left.IsBlack && rn.Right.IsBlack))
+                /*else if (p.IsBlack && !c.IsBlack && (IsLeft ? ln.Left.IsBlack && ln.Right.IsBlack : rn.Left.IsBlack && rn.Right.IsBlack))
                 {
                     Rotate(!IsLeft, c, p);
-                    c.SwapColors(IsLeft ? c.Left : c.Right);
-                }
-                else if (p.IsBlack && !c.IsBlack && (IsLeft ? !ln.Right.IsBlack : !rn.Left.IsBlack))
+                    c.SwapColors(IsLeft ? ln : rn);
+                }*/
+                else if (p.IsBlack && !c.IsBlack /*&& (IsLeft ? !ln.Right.IsBlack : !rn.Left.IsBlack)*/)
                 {
-                    Rotate(IsLeft, IsLeft ? ln : rn, c);
+                    Rotate(!IsLeft, c, p);
+                    c.SwapColors(p);
+                    BalanceAfterRemoving();
+                    /*Rotate(IsLeft, IsLeft ? ln : rn, c);
                     Rotate(!IsLeft, IsLeft ? ln : rn, p);
                     if (!IsLeft)
                         rn.Left.IsBlack = true;
                     else
-                        ln.Right.IsBlack = true;
+                        ln.Right.IsBlack = true;*/
                 }
                 else if (p.IsBlack && c.IsBlack && !c.IsNil && (IsLeft ? !ln.IsBlack : !rn.IsBlack))
                 {
@@ -221,10 +228,51 @@
                     else
                         ln.IsBlack = true;
                 }
-                else
+                else if (p.IsBlack && c.IsBlack && !c.IsNil && ln.IsBlack && rn.IsBlack)
                 {
                     c.IsBlack = true;
                     p.BalanceAfterRemoving();
+                }
+            }
+
+            public void BalanceBeforeRemoving()
+            {
+                Node p = Parent, c = IsLeft ? p.Right : p.Left, ln = c.Left, rn = c.Right;
+                if (!c.IsBlack)
+                {
+                    p.SwapColors(c);
+                    Rotate(!IsLeft, c, p);
+                    p = Parent;
+                    c = IsLeft ? p.Right : p.Left;
+                    ln = c.Left;
+                    rn = c.Right;
+                }
+                if (p.IsBlack && c.IsBlack && !c.IsNil && ln.IsBlack && rn.IsBlack && !ln.IsNil && !rn.IsNil)
+                {
+                    c.IsBlack = false;
+                    BalanceBeforeRemoving();
+                }
+                else if (c.IsBlack && !c.IsNil && ln.IsBlack && rn.IsBlack)
+                    c.SwapColors(p);
+                else
+                {
+                    if (c.IsBlack && !c.IsNil && (IsLeft ? !ln.IsBlack : !rn.IsBlack))
+                    {
+                        c.SwapColors(IsLeft ? rn : ln);
+                        Rotate(IsLeft, IsLeft ? ln : rn, c);
+                        p = Parent;
+                        c = IsLeft ? p.Right : p.Left;
+                        ln = c.Left;
+                        rn = c.Right;
+                    }
+                    c.IsBlack = p.IsBlack;
+                    p.IsBlack = true;
+                    if (!c.IsNil)
+                        if (IsLeft)
+                            rn.IsBlack = true;
+                        else
+                            ln.IsBlack = true;
+                    Rotate(!IsLeft, c, p);
                 }
             }
 

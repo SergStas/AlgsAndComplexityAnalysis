@@ -20,7 +20,8 @@ namespace ACALab4
             "Command '{0}' returned no result",
             "Key '{0}' is already added",
             "Cleared successfully",
-            "NIL-drawing mode switched to '{0}'"
+            "NIL-drawing mode switched to '{0}'",
+            "Tree reset"
         };
         private CommandState _state = CommandState.Init;
         private const int BordersLength = 100;
@@ -55,6 +56,10 @@ namespace ACALab4
             argument = command;
             switch (command)
             {
+                case "-r": case "-reset":
+                    _state = CommandState.Reset;
+                    PresetTree();
+                    return;
                 case "-help": case "-h":
                     _state = CommandState.Help;
                     return;
@@ -122,17 +127,19 @@ namespace ACALab4
 
         private void PresetTree()
         {
-            _tree.Add(3);
+            /*_tree.Add(3);
             _tree.Add(2);
-            _tree.Add(1);
+            _tree.Add(1);*/
             //_tree.Add(0);
-            /*for (var i = 0; i < 20; i++)
-                _tree.Add(new Random().Next(1, 101));*/
+            _tree = new RedBlackTree();
+            for (var i = 0; i < 20; i++)
+                _tree.Add(i);//new Random().Next(1, 101));
         }
         
         private enum CommandState
         {
-            Init, Ok, InvalidCommand, KeyNotFound, Help, ArgumentRequired, UnresolvedArgument, Result, NoResult, Duplicate, Cleared, Switched
+            Init, Ok, InvalidCommand, KeyNotFound, Help, ArgumentRequired, UnresolvedArgument, 
+            Result, NoResult, Duplicate, Cleared, Switched, Reset
         }
     }
 }
