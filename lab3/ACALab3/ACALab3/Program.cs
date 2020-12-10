@@ -11,10 +11,20 @@ namespace ACALab3
             OutputEncoding = Encoding.UTF8;
             /*FirstPart.DoWork(false);
             ReadLine();*/
+            /*
             SecondPart.DoWork();
             ReadLine();
             CheckBasicFunctional();
-            ReadLine();
+            ReadLine();*/
+            var e = new BinarySearchTree<int>();
+            var f = new int[] {1, 6, 3, 2, 6, 8, 3};
+            for (var i = 0; i < f.Length; i++)
+            {
+                e.Add(f[i]);
+                Clear();
+                e.Draw();
+                ReadKey();
+            }
         }
 
         private static void CheckBasicFunctional()

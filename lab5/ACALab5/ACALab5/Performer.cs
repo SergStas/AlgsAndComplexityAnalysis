@@ -11,12 +11,12 @@ namespace ACALab5
         private static readonly TextProcessor Processor = new TextProcessor();
         private const string InputPath = "hobbit.txt";
         private const string OutputPath = "result.txt";
-        private static readonly int[] Sizes = {100, 500, 1000, 2000, 5000};
+        private static readonly int[] Sizes = {/*100, 500, 1000, 2000, 5000, */10000};
         
         public static void DoWork(int iterations, bool fileOutput)
         {
-            PerformSorting();
-            ReadLine();
+            //PerformSorting();
+            //ReadLine();
             PerformMeasures(iterations, fileOutput);
         }
 
@@ -44,7 +44,7 @@ namespace ACALab5
         private static void PerformMeasures(int iterations, bool fileOutput)
         {
             Processor.AddToDictionary(InputPath);
-            MeasureOnGenerated(StringSorter.QuickSort, "QuickSort", iterations, fileOutput);
+            //MeasureOnGenerated(StringSorter.QuickSort, "QuickSort", iterations, fileOutput);
             ReadLine();
             MeasureOnGenerated(StringSorter.BubbleSort, "BubbleSort", iterations, fileOutput);
         }
@@ -56,7 +56,9 @@ namespace ACALab5
             foreach (var size in Sizes)
             {
                 WriteLine($"\tSize - {size}");
-                var elapsed = Measurer.Measure(alg, () => Processor.GenerateText(size).Split(' '), iterations,
+                var elapsed = Measurer.Measure(alg, 
+                    () => Processor.GenerateText(size).Split(' '),
+                    iterations,
                     s => WriteLine($"\t\t[MEASURER {DateTime.Now.ToLongTimeString()}]: {s}"));
                 WriteLine($"\tElapsed time - {(int)(elapsed*100000)/100000.0}s");
                 results.Add(size, elapsed);

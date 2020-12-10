@@ -9,7 +9,8 @@ namespace ACALab5
     public class TextProcessor
     {
         private readonly List<string> _tokens = new List<string>();
-        private static readonly char[] Splitters = {' ', ',', '.', ':', '-', '!', '?', ';', '\"', '(', ')', '#', '[', ']', '\t', '\n', '_', '`', '\''};
+        private static readonly char[] Splitters = 
+            {' ', ',', '.', ':', '-', '!', '?', ';', '\"', '(', ')', '#', '[', ']', '\t', '\n', '_', '`', '\''};
 
         public IEnumerable<string> ReadTokens(string path)
         {

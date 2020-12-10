@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ACALab4
+﻿namespace ACALab4
 {
     public partial class RedBlackTree
     {
@@ -14,10 +12,13 @@ namespace ACALab4
             while (_root != null && !node.DirectionOf(key).IsNil)
                 node = node.DirectionOf(key);
             var result = new Node(key, node) {IsBlack = _root is null, IsRoot = _root is null};
-            if (_root == null) _root = result;
-            else node.InsertChild(result);
+            if (_root == null) 
+                _root = result;
+            else 
+                node.InsertChild(result);
             result.BalanceAfterAdding();
-            if (!_root.IsRoot) _root = result.Root;
+            if (!_root.IsRoot) 
+                _root = result.Root;
             _root.IsBlack = true;
             return true;
         }

@@ -6,7 +6,8 @@ namespace ACALab5
     {
         static void Main(string[] args)
         {
-            Performer.DoWork(10, true);
+            Performer.DoWork(1, false);
+            Console.ReadLine();
             Console.ReadLine();
         }
     }
