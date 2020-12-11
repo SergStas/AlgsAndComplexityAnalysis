@@ -44,5 +44,7 @@ namespace Graph
             foreach (var node in IncidentNodes())
                 Detach(node);
         }
+
+        public override string ToString() => $"{Label}: {Power}";
     }
 }

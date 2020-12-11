@@ -1,4 +1,4 @@
-﻿using System;
+﻿using static System.Console;
 
 namespace SemesterWork
 {
@@ -6,7 +6,8 @@ namespace SemesterWork
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var graph = FileParser.GetGraph("graphInput.txt");
+            ReadLine();
         }
     }
 }
