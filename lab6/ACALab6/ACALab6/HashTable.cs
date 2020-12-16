@@ -18,7 +18,7 @@ namespace ACALab6
             var i = 0;
             do
             {
-                var index = CalculateHash(data, i++);
+                var index = CalculateHash(data.Id, i++);
                 if (!(_cells[index] is null)) continue;
                 _cells[index] = data;
                 return index;
@@ -26,34 +26,49 @@ namespace ACALab6
             return -1;
         }
 
-        public int Find(UserData data)
+        public UserData Find(string id)
         {
             var i = 0;
             do
             {
-                var index = CalculateHash(data, i++);
-                if (!_cells[index].Equals(data)) continue;
-                return index;
+                var index = CalculateHash(id, i++);
+                if (_cells[index] == null || _cells[index].Id != id) continue;
+                return _cells[index];
             } while (i < _size);
-            return -1;
+            return null;
         }
 
-        public bool Remove(UserData data)
+        public bool Remove(string id)
         {
-            var key = Find(data);
-            if (key < 0 || key >= _size)
-                return false;
-            _cells[key] = null;
-            return true;
+            var data = Find(id);
+            var i = 0;
+            do
+            {
+                var index = CalculateHash(id, i++);
+                if (_cells[index] == null || _cells[i].Id != id) continue;
+                _cells[index] = null;
+                return true;
+            } while (i < _size);
+            return false;
         }
 
-        public UserData Get(int key) => _cells[key];
-
-        private int CalculateHash(UserData data, int i)
+        private int CalculateHash(string key, int i)
         {
             unchecked
             {
-                return Math.Abs(data.GetExtraHash() + i * data.GetHashCode()) % _size;
+                return Math.Abs(GetStringHash(key) + i * key.GetHashCode()) % _size;
+            }
+        }
+
+        private static int GetStringHash(string s)
+        {
+            var seed = 967;
+            unchecked
+            {
+                var hash = 1;
+                foreach (var c in s)
+                    hash = hash * seed + c.GetHashCode();
+                return hash;
             }
         }
     }

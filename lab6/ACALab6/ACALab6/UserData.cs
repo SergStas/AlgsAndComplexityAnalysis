@@ -16,18 +16,6 @@ namespace ACALab6
                 RegDate = Generator.GenRndDate(),
                 Genres = Generator.FillGenres()
             };
-
-        public int GetExtraHash()
-        {
-            var seed = 967;
-            unchecked
-            {
-                var hash = RegDate.GetHashCode() ^ seed * Id.GetHashCode();
-                foreach (var genre in Genres)
-                    hash = hash * seed + genre.GetHashCode();
-                return hash;
-            }
-        }
     }
 
     public enum Genre {VN, RPG, Strategy, Fighting, Simulator, Shooter}

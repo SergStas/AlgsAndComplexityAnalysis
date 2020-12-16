@@ -16,7 +16,7 @@ namespace ACALab6
         }
 
         public static string GenRndDate() =>
-            $"{new Random().Next(0,2021)}.{new Random().Next(0,13)}.{new Random().Next(0,32)}";
+            $"{new Random().Next(1980,2021)}.{new Random().Next(1,13)}.{new Random().Next(1,32)}";
 
         public static List<Genre> FillGenres()
         {
