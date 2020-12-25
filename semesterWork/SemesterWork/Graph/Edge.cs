@@ -16,7 +16,7 @@ namespace Graph
             Weight = weight;
         }
 
-        public Node SecondNode(Node node) => node.Equals(From) ? From : To;
+        public Node SecondNode(Node node) => node.Equals(To) ? From : To;
 
         public bool Contains(Node node) => From.Equals(node) || To.Equals(node);
         

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Graph
 {
@@ -18,7 +19,8 @@ namespace Graph
                 yield return edge;
         }
         
-        public bool IsConnected(Node node) => IncidentNodes().Contains(node);
+        public bool IsConnected(Node node) => 
+            IncidentNodes().Contains(node) || node.IncidentNodes().Contains(this);
         
         public IEnumerable<Node> IncidentNodes()
         {
@@ -47,7 +49,7 @@ namespace Graph
                 Detach(node);
         }
 
-        public override string ToString() => $"{Label}: {Power}";
+        public override string ToString() => $"{Label}[{Power}]";
 
         public void Rename(string newLabel) => Label = newLabel;
     }

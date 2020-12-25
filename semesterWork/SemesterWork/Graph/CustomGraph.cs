@@ -29,7 +29,8 @@ namespace Graph
         public bool TryConnect(string first, string second, double weight = 0)
         {
             Node from = FindNode(first), to = FindNode(second);
-            if (from is null || to is null || first == second || from.IsConnected(to))
+            var e = from.IsConnected(to);
+            if (from is null || to is null || first == second || e)
                 return false;
             Connect(first, second, weight);
             return true;

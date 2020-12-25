@@ -6,7 +6,7 @@ namespace SemesterWork
     {
         static void Main(string[] args)
         {
-            
+            new Solver().Run();
             ReadLine();
         }
     }
