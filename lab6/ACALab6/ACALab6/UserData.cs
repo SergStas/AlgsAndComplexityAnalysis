@@ -5,7 +5,7 @@ namespace ACALab6
 {
     public class UserData
     {
-        public string Id { get; private set; }
+        public string Id { get; set; }
         public string RegDate { get; private set; }
         public List<Genre> Genres { get; private set; }
 

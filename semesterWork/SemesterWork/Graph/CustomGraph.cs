@@ -15,6 +15,8 @@ namespace Graph
             foreach (var node in _nodes)
                 yield return node;
         }
+
+        public Node GetNodeById(int id) => id < NodesCount && id >= 0 ? _nodes[id] : null;
         
         public void Add(string label) => _nodes.Add(new Node(label));
 
@@ -22,6 +24,15 @@ namespace Graph
         {
             foreach (var label in labels)
                 Add(label);
+        }
+
+        public bool TryConnect(string first, string second, double weight = 0)
+        {
+            Node from = FindNode(first), to = FindNode(second);
+            if (from is null || to is null || first == second || from.IsConnected(to))
+                return false;
+            Connect(first, second, weight);
+            return true;
         }
 
         public void Connect(string first, string second, double weight = 0) => FindNode(first)?.Connect(FindNode(second), weight);
@@ -35,5 +46,7 @@ namespace Graph
         public Node FindNode(string label) => Nodes().FirstOrDefault(n => n.Label == label);
 
         public void Remove(string label) => FindNode(label)?.Remove();
+
+        public void Rename(string oldLabel, string newLabel) => FindNode(oldLabel).Rename(newLabel);
     }
 }

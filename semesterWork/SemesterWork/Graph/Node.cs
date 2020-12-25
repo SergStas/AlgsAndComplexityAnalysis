@@ -5,7 +5,7 @@ namespace Graph
 {
     public class Node
     {
-        public string Label { get; }
+        public string Label { get; private set; }
         public int Power => _edges.Count;
         
         private readonly List<Edge> _edges = new List<Edge>();
@@ -17,6 +17,8 @@ namespace Graph
             foreach (var edge in _edges)
                 yield return edge;
         }
+        
+        public bool IsConnected(Node node) => IncidentNodes().Contains(node);
         
         public IEnumerable<Node> IncidentNodes()
         {
@@ -46,5 +48,7 @@ namespace Graph
         }
 
         public override string ToString() => $"{Label}: {Power}";
+
+        public void Rename(string newLabel) => Label = newLabel;
     }
 }

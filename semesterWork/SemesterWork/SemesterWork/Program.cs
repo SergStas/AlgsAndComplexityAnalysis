@@ -6,7 +6,7 @@ namespace SemesterWork
     {
         static void Main(string[] args)
         {
-            var graph = FileParser.GetGraph("graphInput.txt");
+            
             ReadLine();
         }
     }

@@ -8,7 +8,7 @@ namespace ACALab6
     {
         static void Main(string[] args)
         {
-            var size = 10000;
+            var size = 1000;
             var table = new HashTable(size);
             var count = new Random().Next(0, size);
             WriteLine("Generating...");

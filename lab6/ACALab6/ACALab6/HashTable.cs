@@ -56,7 +56,8 @@ namespace ACALab6
         {
             unchecked
             {
-                return Math.Abs(GetStringHash(key) + i * key.GetHashCode()) % _size;
+                /*return Math.Abs(GetStringHash(key) + i * key.GetHashCode()) % _size;*/
+                return key[0] - 'a' + i;
             }
         }
 
@@ -65,10 +66,10 @@ namespace ACALab6
             var seed = 967;
             unchecked
             {
-                var hash = 1;
+                /*var hash = 1;
                 foreach (var c in s)
-                    hash = hash * seed + c.GetHashCode();
-                return hash;
+                    hash = hash * seed + c.GetHashCode();*/
+                return s[0] - 'a';
             }
         }
     }
