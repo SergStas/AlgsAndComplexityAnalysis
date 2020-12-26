@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Double;
 
 namespace Graph
 {
@@ -29,8 +30,7 @@ namespace Graph
         public bool TryConnect(string first, string second, double weight = 0)
         {
             Node from = FindNode(first), to = FindNode(second);
-            var e = from.IsConnected(to);
-            if (from is null || to is null || first == second || e)
+            if (from is null || to is null || first == second || from.IsConnected(to))
                 return false;
             Connect(first, second, weight);
             return true;
@@ -49,5 +49,18 @@ namespace Graph
         public void Remove(string label) => FindNode(label)?.Remove();
 
         public void Rename(string oldLabel, string newLabel) => FindNode(oldLabel).Rename(newLabel);
+
+        public double CalculateLength(int[] indexes)
+        {
+            var result = (indexes is null || indexes.Length < 2) ? NaN : 0.0;
+            for (var i = 1; i < indexes.Length; i++)
+                result += GetNodeById(indexes[i]).Edges().FirstOrDefault(e => e.Contains(GetNodeById(indexes[i - 1])))?.Weight ?? NaN;
+            if (IsNaN(result))
+                result = MaxValue;
+            return result;
+        }
+
+        public double CalculateLength(IEnumerable<string> labels) => CalculateLength(labels
+            .Select(l => _nodes.IndexOf(_nodes.Find(n => n.Label == l))).ToArray());
     }
 }

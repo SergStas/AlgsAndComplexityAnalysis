@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Graph
@@ -8,7 +9,9 @@ namespace Graph
         private const int DefaultWeightMinValue = 50;
         private const int DefaultWeightMaxValue = 1500;
         private const int DefaultNodesMinCount = 4;
-        private const int DefaultNodesMaxCount = 5;
+        private const int DefaultNodesMaxCount = 9;
+        private const double OrderMinMass = 0.3;
+        private const double OrderMaxMass = 3;
         private const string DefaultLabelFormat = "Node#{0}";
         
         private readonly Random _rnd;
@@ -48,5 +51,8 @@ namespace Graph
         {
             _rnd = new Random();
         }
+
+        public List<(string, double)> GenerateOrdersSequence(CustomGraph graph) => 
+            graph.Nodes().Skip(1).Select(node => (node.Label, Math.Round(_rnd.NextDouble() * (OrderMaxMass - OrderMinMass) + OrderMinMass, 2))).ToList();
     }
 }
