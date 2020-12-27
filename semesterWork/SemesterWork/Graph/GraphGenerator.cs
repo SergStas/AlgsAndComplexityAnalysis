@@ -16,12 +16,14 @@ namespace Graph
         
         private readonly Random _rnd;
 
-        public CustomGraph GenerateGraph(bool taskPattern)
+        public CustomGraph GenerateGraph(bool taskPattern) =>
+            GenerateGraph(_rnd.Next(DefaultNodesMinCount, DefaultNodesMaxCount + 1), taskPattern);
+
+        public CustomGraph GenerateGraph(int nodesCount, bool taskPattern)
         {
             var result = new CustomGraph();
-            var count = _rnd.Next(DefaultNodesMinCount, DefaultNodesMaxCount + 1);
-            AddNodes(result, count);
-            var powers = new int[count].Select(_ => _rnd.Next(1, count - 1)).ToArray();
+            AddNodes(result, nodesCount);
+            var powers = new int[nodesCount].Select(_ => _rnd.Next(1, nodesCount - 1)).ToArray();
             AddEdges(result, powers, taskPattern);
             if (taskPattern) result.GetNodeById(0).Rename("Storage");
             return result;
